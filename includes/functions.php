@@ -42,6 +42,17 @@ function save_application(int $jobId):string{
  return '';
 }
 
+function make_slug($text) {
+    $text = preg_replace('~[^\pL\d]+~u', '-', $text);
+    if (function_exists('iconv')) {
+        $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+    }
+    $text = preg_replace('~[^-\w]+~', '', $text);
+    $text = trim($text, '-');
+    $text = preg_replace('~-+~', '-', $text);
+    return strtolower($text ?: 'item-' . time());
+}
+
 // Auto-create blogs table if missing in production database
 function ensure_blogs_table() {
     static $done = false;
@@ -96,6 +107,87 @@ function ensure_blogs_table() {
     }
 }
 ensure_blogs_table();
+
+function ensure_services_schema() {
+    static $done = false;
+    if ($done) return;
+    $done = true;
+    try {
+        $cols = db()->query("SHOW COLUMNS FROM services LIKE 'slug'")->fetchAll();
+        if (empty($cols)) {
+            db()->exec("ALTER TABLE services ADD COLUMN slug VARCHAR(120) NULL AFTER title");
+            try { db()->exec("ALTER TABLE services ADD UNIQUE (slug)"); } catch (Exception $ex) {}
+        }
+        
+        $cols = db()->query("SHOW COLUMNS FROM services LIKE 'content'")->fetchAll();
+        if (empty($cols)) {
+            db()->exec("ALTER TABLE services ADD COLUMN content MEDIUMTEXT NULL AFTER description");
+        }
+
+        db()->exec("UPDATE services SET image_url = 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80' WHERE title LIKE '%Contract Staffing%' AND (image_url LIKE '%1556761175%' OR image_url = '' OR image_url IS NULL)");
+
+        $defaults = [
+            'Permanent Recruitment' => [
+                'slug' => 'permanent-recruitment',
+                'image' => 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=800&q=80',
+                'desc' => 'End-to-end sourcing, screening and placement of full-time talent tailored to your long-term organizational goals.',
+                'content' => "### Comprehensive Permanent Hiring Solutions\n\nFinding the right full-time employees is crucial for the continuous growth, cultural synergy, and operational success of your business. At ADISOMA Solution, our permanent staffing practice delivers high-caliber candidates who not only possess verified technical and domain skills but also align with your organization's vision.\n\n### Our Strategic Methodology\n- **Deep Requirement Discovery**: We consult with your hiring managers to define core competencies, cultural fit, and performance expectations.\n- **Multi-Channel Talent Sourcing**: Leveraging proprietary talent databases, verified industry applicant pools, and targeted direct-headhunting.\n- **360-Degree Screening**: Rigorous technical assessments, structured behavioral interviews, and comprehensive reference checks.\n- **Seamless Onboarding & Follow-Up**: Ongoing support through compensation negotiation, offer release, and post-placement integration.\n\n### Key Benefits of Permanent Placement\n- Faster time-to-hire with industry-tested candidate shortlists\n- Dedicated industry recruitment desks (IT, BFSI, Healthcare, Engineering & Non-IT)\n- Replacement warranty for guaranteed peace of mind"
+            ],
+            'Contract Staffing' => [
+                'slug' => 'contract-staffing',
+                'image' => 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80',
+                'desc' => 'Flexible, highly skilled professionals for project-based, seasonal, and short-term workload requirements.',
+                'content' => "### Agile & On-Demand Contract Workforce\n\nModern market demands fluctuate rapidly. Whether you are executing a mission-critical technology migration, covering seasonal workload spikes, or managing project deadlines, ADISOMA Solution provides agile contract staffing solutions that give your enterprise dynamic scaling capabilities without increasing permanent payroll liabilities.\n\n### Key Benefits of Contract Staffing\n- **Rapid Deployment**: Pre-vetted specialists ready to contribute from day one.\n- **Cost Efficiency**: Minimize long-term liabilities, benefits administration, and severance overheads.\n- **Specialized Expertise**: Access niche skill sets for specific project milestones without permanent commitments.\n- **Seamless Payroll & Compliance**: We handle statutory benefits, labor compliance, and payroll processing end-to-end.\n\n### Popular Roles Filled via Contract Staffing\n- Software Engineers, Cloud Architects & QA Testers\n- Project Managers & Agile Scrum Masters\n- Seasonal Customer Support & Operations Executives\n- Financial Analysts & Interim Leadership"
+            ],
+            'IT Recruitment' => [
+                'slug' => 'it-recruitment',
+                'image' => 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80',
+                'desc' => 'Developers, testers, DevOps, data engineers, cloud architects, and cybersecurity specialists.',
+                'content' => "### Connecting High-Growth Companies with Premier Tech Talent\n\nIn a fast-advancing technological landscape, having top-tier technical talent is the ultimate competitive advantage. ADISOMA Solution operates a dedicated IT Recruitment desk led by technical talent scouts who understand modern tech stacks, cloud architectures, and digital transformation.\n\n### Technical Domains We Specialize In\n- **Full-Stack & Software Engineering**: Java, Python, .NET, Node.js, React, Angular, Go, and Mobile (Flutter/React Native/iOS/Android).\n- **Cloud & DevOps**: AWS, Microsoft Azure, GCP, Kubernetes, Docker, CI/CD, and Infrastructure as Code.\n- **Data & Artificial Intelligence**: Data Engineering, Business Intelligence, Machine Learning, and Big Data.\n- **Cybersecurity & Network Engineering**: Information Security, SOC Analysts, Penetration Testing, and Network Architecture.\n\n### Our Rigorous Technical Vetting\nEvery candidate is evaluated through code sample reviews, problem-solving challenges, and architectural aptitude assessments before reaching your interview panel."
+            ],
+            'Non-IT Recruitment' => [
+                'slug' => 'non-it-recruitment',
+                'image' => 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=800&q=80',
+                'desc' => 'Sales, HR, finance, supply chain, marketing, operations and customer support professionals.',
+                'content' => "### Driving Business Performance with Exceptional Non-Tech Professionals\n\nBehind every successful enterprise is a foundation of strong operational, financial, and strategic talent. ADISOMA Solution delivers specialized Non-IT recruitment services to build high-performance functional teams across key corporate verticals.\n\n### Functional Verticals Covered\n- **Sales, BD & Client Relations**: B2B Sales Executives, Key Account Managers, and Regional Heads.\n- **Finance & Accounting**: Chartered Accountants, Financial Controllers, Audit Specialists, and Tax Consultants.\n- **Human Resources & Talent Acquisition**: HR Business Partners, Talent Acquisition Specialists, and L&D Managers.\n- **Operations, Logistics & Supply Chain**: Procurement Managers, Supply Chain Coordinators, and Plant Operations.\n- **Marketing & Brand Communication**: Digital Marketers, Brand Managers, and Content Strategists."
+            ],
+            'Executive Search' => [
+                'slug' => 'executive-search',
+                'image' => 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=800&q=80',
+                'desc' => 'Confidential, discreet search and placement for C-suite leaders, directors, and strategic executives.',
+                'content' => "### Leadership That Defines Tomorrow\n\nExecutive leadership positions dictate the trajectory and culture of an enterprise. Appointing the wrong executive carries monumental financial and cultural costs. ADISOMA Solution offers bespoke, highly confidential Executive Search services to place visionary leaders into C-Suite, VP, and Director-level roles.\n\n### What Sets Our Executive Search Apart\n- **Absolute Discretion & Confidentiality**: Protecting both the client's corporate privacy and the candidate's career interests.\n- **Comprehensive Market Mapping**: Thorough competitive benchmarking and talent landscape assessment.\n- **Leadership Competency Evaluation**: Strategic vision, change management capability, and executive presence analysis.\n- **Offer Structuring & Negotiation**: Equity packages, long-term incentive plans (LTIP), and severance negotiation guidance."
+            ],
+            'HR Consulting' => [
+                'slug' => 'hr-consulting',
+                'image' => 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80',
+                'desc' => 'Hiring strategy, compensation benchmarking, onboarding frameworks and workforce planning support.',
+                'content' => "### Strategic People Solutions for Growing Organizations\n\nAs organizations evolve, managing the human capital function requires structure, compliance, and strategic vision. ADISOMA Solution partners with startups, SMEs, and established corporations to deliver bespoke HR advisory and workforce transformation services.\n\n### Consulting Services We Provide\n- **Compensation & Benefits Benchmarking**: Ensure competitive remuneration models aligned with industry trends.\n- **Organizational Design & Workforce Planning**: Structuring reporting lines, role definitions, and capability planning.\n- **HR Policy Formulation & Compliance**: Designing employee handbooks, statutory compliance frameworks, and grievance policies.\n- **Performance Management Systems (PMS)**: Implementing OKRs, KPIs, and transparent appraisal mechanisms.\n- **Employer Branding Strategy**: Positioning your organization as an employer of choice in competitive talent markets."
+            ]
+        ];
+
+        foreach ($defaults as $title => $data) {
+            $stmt = db()->prepare("SELECT id, slug, content, image_url FROM services WHERE title = ?");
+            $stmt->execute([$title]);
+            $s = $stmt->fetch();
+            if ($s) {
+                $needsUpdate = empty($s['slug']) || empty($s['content']) || empty($s['image_url']) || strpos((string)$s['image_url'], '1556761175') !== false;
+                if ($needsUpdate) {
+                    $slugVal = !empty($s['slug']) ? $s['slug'] : $data['slug'];
+                    $contentVal = !empty($s['content']) ? $s['content'] : $data['content'];
+                    $imgVal = (!empty($s['image_url']) && strpos($s['image_url'], '1556761175') === false) ? $s['image_url'] : $data['image'];
+                    db()->prepare("UPDATE services SET slug = ?, content = ?, image_url = ? WHERE id = ?")
+                        ->execute([$slugVal, $contentVal, $imgVal, $s['id']]);
+                }
+            } else {
+                db()->prepare("INSERT INTO services(title, slug, description, content, image_url, sort_order, active) VALUES (?, ?, ?, ?, ?, 99, 1)")
+                    ->execute([$title, $data['slug'], $data['desc'], $data['content'], $data['image']]);
+            }
+        }
+    } catch (Exception $e) {
+        // Silently continue
+    }
+}
+ensure_services_schema();
 
 function asset_v(?string $override = null): string {
     static $v = null;
