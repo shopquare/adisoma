@@ -55,6 +55,167 @@ if (!function_exists('make_slug')) {
     }
 }
 
+// Universal parser for rich Markdown content in services and blogs
+function render_markdown_content(?string $text): string {
+    if (empty($text)) return '';
+    $lines = explode("\n", (string)$text);
+    $html = '';
+    $inPara = false;
+    $inList = false;
+
+    $formatInline = function(string $str): string {
+        $s = e($str);
+        // **bold**
+        $s = preg_replace('/\*\*(.*?)\*\*/', '<strong style="color:var(--n,#0f172a); font-weight:700;">$1</strong>', $s);
+        // *italic*
+        $s = preg_replace('/(?<!\*)\*(?!\*)(.*?)(?<!\*)\*(?!\*)/', '<em>$1</em>', $s);
+        // [text](url)
+        $s = preg_replace_callback('/\[(.*?)\]\((https?:\/\/[^\s\)]+)\)/', function($m) {
+            return '<a href="' . $m[2] . '" target="_blank" rel="noopener noreferrer" style="color:var(--o,#f57c00); text-decoration:underline; font-weight:600;">' . $m[1] . '</a>';
+        }, $s);
+        return $s;
+    };
+
+    foreach ($lines as $line) {
+        $trimmed = trim($line);
+        if ($trimmed === '') {
+            if ($inPara) { $html .= "</p>\n"; $inPara = false; }
+            if ($inList) { $html .= "</ul>\n"; $inList = false; }
+            continue;
+        }
+
+        if (str_starts_with($trimmed, '### ')) {
+            if ($inPara) { $html .= "</p>\n"; $inPara = false; }
+            if ($inList) { $html .= "</ul>\n"; $inList = false; }
+            $html .= '<h3 style="color:var(--n,#0f172a); margin:30px 0 14px; font-size:22px; font-weight:700;">' . e(substr($trimmed, 4)) . "</h3>\n";
+        } elseif (str_starts_with($trimmed, '## ')) {
+            if ($inPara) { $html .= "</p>\n"; $inPara = false; }
+            if ($inList) { $html .= "</ul>\n"; $inList = false; }
+            $html .= '<h2 style="color:var(--n,#0f172a); margin:36px 0 16px; font-size:26px; font-weight:700;">' . e(substr($trimmed, 3)) . "</h2>\n";
+        } elseif (str_starts_with($trimmed, '- ') || str_starts_with($trimmed, '* ')) {
+            if ($inPara) { $html .= "</p>\n"; $inPara = false; }
+            if (!$inList) { $html .= "<ul style=\"margin:0 0 20px 20px; padding:0; list-style-type:disc; color:#475569;\">\n"; $inList = true; }
+            $itemText = substr($trimmed, 2);
+            $html .= '<li style="margin-bottom:10px; line-height:1.7;">' . $formatInline($itemText) . "</li>\n";
+        } else {
+            if ($inList) { $html .= "</ul>\n"; $inList = false; }
+            if (!$inPara) {
+                $html .= '<p style="margin-bottom:20px; line-height:1.8; font-size:16px; color:#334155;">';
+                $inPara = true;
+            } else {
+                $html .= "<br>";
+            }
+            $html .= $formatInline($trimmed);
+        }
+    }
+
+    if ($inPara) $html .= "</p>\n";
+    if ($inList) $html .= "</ul>\n";
+    return $html;
+}
+
+// Visual Markdown toolbar and user instruction guide for admin inputs
+function markdown_guide_html(string $targetId = 'contentField'): string {
+    ob_start();
+    ?>
+    <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:10px; padding:16px; margin:10px 0 16px; font-size:13px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:16px;">📝</span>
+                <strong style="color:#1e293b; font-size:14px;">Formatting Cheat Sheet & Quick Toolbar</strong>
+                <span style="color:#64748b; font-size:12px;">(Click any button to insert template syntax into your content)</span>
+            </div>
+            <button type="button" class="btn sm alt" onclick="var el=document.getElementById('mdCheatTable_<?=$targetId?>'); var isHidden = (el.style.display==='none'); el.style.display = isHidden ? 'grid' : 'none'; this.innerText = isHidden ? 'Hide Guide Details' : 'ℹ️ Show Guide Details';" style="padding:3px 10px; font-size:12px; margin:0;">
+                Hide Guide Details
+            </button>
+        </div>
+
+        <!-- Quick Insertion Buttons Toolbar -->
+        <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px;">
+            <button type="button" class="btn sm alt" onclick="insertMdTemplate('## ', 'Major Section Heading', '<?=$targetId?>')" style="padding:4px 10px; font-size:12px; font-weight:700; margin:0;" title="Insert Major Section Title">## Main Heading</button>
+            <button type="button" class="btn sm alt" onclick="insertMdTemplate('### ', 'Sub-heading Title', '<?=$targetId?>')" style="padding:4px 10px; font-size:12px; font-weight:700; margin:0;" title="Insert Subheading">### Sub-heading</button>
+            <button type="button" class="btn sm alt" onclick="insertMdWrapTemplate('**', '**', 'bold text', '<?=$targetId?>')" style="padding:4px 10px; font-size:12px; font-weight:700; margin:0;" title="Make text bold">**Bold**</button>
+            <button type="button" class="btn sm alt" onclick="insertMdWrapTemplate('*', '*', 'italic text', '<?=$targetId?>')" style="padding:4px 10px; font-size:12px; font-style:italic; margin:0;" title="Make text italic">*Italic*</button>
+            <button type="button" class="btn sm alt" onclick="insertMdTemplate('- ', 'Key bullet point item', '<?=$targetId?>')" style="padding:4px 10px; font-size:12px; font-weight:600; margin:0;" title="Insert bullet list item">• Bullet List</button>
+            <button type="button" class="btn sm alt" onclick="insertMdWrapTemplate('[', '](https://example.com)', 'Clickable Link Title', '<?=$targetId?>')" style="padding:4px 10px; font-size:12px; font-weight:600; margin:0;" title="Insert hyperlink">[Link](URL)</button>
+        </div>
+
+        <!-- Detail Explanation Cards -->
+        <div id="mdCheatTable_<?=$targetId?>" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:10px;">
+            <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:6px; padding:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                    <code style="background:#fff7ed; color:#c2410c; font-weight:800; padding:2px 6px; border-radius:4px; border:1px solid #fed7aa;">## Title</code>
+                    <span style="font-size:11px; color:#64748b; font-weight:600;">Heading 2</span>
+                </div>
+                <div style="color:#475569; font-size:12px;">Use two hashes followed by a space to create large section titles.</div>
+            </div>
+            <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:6px; padding:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                    <code style="background:#fff7ed; color:#c2410c; font-weight:800; padding:2px 6px; border-radius:4px; border:1px solid #fed7aa;">### Title</code>
+                    <span style="font-size:11px; color:#64748b; font-weight:600;">Heading 3</span>
+                </div>
+                <div style="color:#475569; font-size:12px;">Use three hashes followed by a space to create sub-headings.</div>
+            </div>
+            <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:6px; padding:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                    <code style="background:#f1f5f9; color:#0f172a; font-weight:800; padding:2px 6px; border-radius:4px;">**word**</code>
+                    <span style="font-size:11px; color:#15803d; font-weight:700;">Bold Text</span>
+                </div>
+                <div style="color:#475569; font-size:12px;">Wrap text in double asterisks <code>**text**</code> to make it bold.</div>
+            </div>
+            <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:6px; padding:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                    <code style="background:#f1f5f9; color:#0f172a; font-weight:800; padding:2px 6px; border-radius:4px;">*word*</code>
+                    <span style="font-size:11px; color:#0369a1; font-weight:700; font-style:italic;">Italic Text</span>
+                </div>
+                <div style="color:#475569; font-size:12px;">Wrap text in single asterisks <code>*text*</code> for italics.</div>
+            </div>
+            <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:6px; padding:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                    <code style="background:#f1f5f9; color:#0f172a; font-weight:800; padding:2px 6px; border-radius:4px;">- Point</code>
+                    <span style="font-size:11px; color:#64748b; font-weight:600;">Bullet Points</span>
+                </div>
+                <div style="color:#475569; font-size:12px;">Start each line with a hyphen <code>- </code> to create clean bulleted lists.</div>
+            </div>
+            <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:6px; padding:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                    <code style="background:#f1f5f9; color:#0f172a; font-weight:800; padding:2px 6px; border-radius:4px;">Enter ↵ ↵</code>
+                    <span style="font-size:11px; color:#64748b; font-weight:600;">Paragraphs</span>
+                </div>
+                <div style="color:#475569; font-size:12px;">Leave one blank empty line between paragraphs to separate them cleanly.</div>
+            </div>
+        </div>
+    </div>
+    <script>
+    if (typeof window.insertMdTemplate === 'undefined') {
+        window.insertMdTemplate = function(prefix, placeholder, targetId) {
+            var ta = document.getElementById(targetId);
+            if (!ta) return;
+            var start = ta.selectionStart, end = ta.selectionEnd, val = ta.value;
+            var sel = val.substring(start, end) || placeholder;
+            var add = (start > 0 && val.charAt(start-1) !== '\n' ? '\n' : '') + prefix + sel + '\n';
+            ta.value = val.substring(0, start) + add + val.substring(end);
+            ta.focus();
+            ta.selectionStart = start + prefix.length + (start > 0 && val.charAt(start-1) !== '\n' ? 1 : 0);
+            ta.selectionEnd = ta.selectionStart + sel.length;
+        };
+        window.insertMdWrapTemplate = function(before, after, placeholder, targetId) {
+            var ta = document.getElementById(targetId);
+            if (!ta) return;
+            var start = ta.selectionStart, end = ta.selectionEnd, val = ta.value;
+            var sel = val.substring(start, end) || placeholder;
+            var add = before + sel + after;
+            ta.value = val.substring(0, start) + add + val.substring(end);
+            ta.focus();
+            ta.selectionStart = start + before.length;
+            ta.selectionEnd = ta.selectionStart + sel.length;
+        };
+    }
+    </script>
+    <?php
+    return ob_get_clean();
+}
+
 // Auto-create blogs table if missing in production database
 function ensure_blogs_table() {
     static $done = false;

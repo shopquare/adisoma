@@ -43,51 +43,7 @@ if ($cat) {
 
 // Helper to render rich markdown/text content
 function render_service_content($text) {
-    $lines = explode("\n", (string)$text);
-    $html = '';
-    $inPara = false;
-    $inList = false;
-
-    foreach ($lines as $line) {
-        $trimmed = trim($line);
-        if ($trimmed === '') {
-            if ($inPara) { $html .= "</p>\n"; $inPara = false; }
-            if ($inList) { $html .= "</ul>\n"; $inList = false; }
-            continue;
-        }
-
-        if (str_starts_with($trimmed, '### ')) {
-            if ($inPara) { $html .= "</p>\n"; $inPara = false; }
-            if ($inList) { $html .= "</ul>\n"; $inList = false; }
-            $html .= '<h3 style="color:var(--n); margin:32px 0 14px; font-size:22px; font-weight:700;">' . e(substr($trimmed, 4)) . "</h3>\n";
-        } elseif (str_starts_with($trimmed, '## ')) {
-            if ($inPara) { $html .= "</p>\n"; $inPara = false; }
-            if ($inList) { $html .= "</ul>\n"; $inList = false; }
-            $html .= '<h2 style="color:var(--n); margin:36px 0 16px; font-size:26px; font-weight:700;">' . e(substr($trimmed, 3)) . "</h2>\n";
-        } elseif (str_starts_with($trimmed, '- ') || str_starts_with($trimmed, '* ')) {
-            if ($inPara) { $html .= "</p>\n"; $inPara = false; }
-            if (!$inList) { $html .= "<ul style=\"margin:0 0 20px 20px; padding:0; list-style-type:disc; color:#475569;\">\n"; $inList = true; }
-            $itemText = substr($trimmed, 2);
-            // Support basic bold in bullets **text**
-            $itemText = preg_replace_callback('/\*\*(.*?)\*\*/', fn($m) => '<strong style="color:var(--n);">' . e($m[1]) . '</strong>', $itemText);
-            $html .= '<li style="margin-bottom:10px; line-height:1.7;">' . $itemText . "</li>\n";
-        } else {
-            if ($inList) { $html .= "</ul>\n"; $inList = false; }
-            if (!$inPara) {
-                $html .= '<p style="margin-bottom:20px; line-height:1.8; font-size:16px; color:#334155;">';
-                $inPara = true;
-            } else {
-                $html .= "<br>";
-            }
-            $lineText = e($trimmed);
-            $lineText = preg_replace_callback('/\*\*(.*?)\*\*/', fn($m) => '<strong style="color:var(--n);">' . e($m[1]) . '</strong>', $lineText);
-            $html .= $lineText;
-        }
-    }
-
-    if ($inPara) $html .= "</p>\n";
-    if ($inList) $html .= "</ul>\n";
-    return $html;
+    return render_markdown_content($text);
 }
 ?>
 

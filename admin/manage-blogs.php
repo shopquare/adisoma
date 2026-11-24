@@ -130,8 +130,9 @@ if (isset($_GET['new']) || isset($_GET['edit'])) {
             </div>
         <?php endif; ?>
 
-        <label>Full Content * (Supports standard text & line breaks)</label>
-        <textarea name="content" rows="12" required placeholder="Write the full blog article content here..."><?= e($b['content']) ?></textarea>
+        <label style="font-weight:700; color:var(--n);">Full Content * (Markdown & rich paragraphs supported)</label>
+        <?= markdown_guide_html('blogContentField') ?>
+        <textarea name="content" id="blogContentField" rows="14" required placeholder="Write the full blog article content here..."><?= e($b['content']) ?></textarea>
 
         <label>Status</label>
         <select name="status">

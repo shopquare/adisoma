@@ -25,46 +25,7 @@ include 'includes/header.php';
 
 // Format content helper (handles markdown style headings, bold text, and paragraphs)
 function render_article_content($text) {
-    $lines = explode("\n", $text);
-    $html = '';
-    $inPara = false;
-
-    foreach ($lines as $line) {
-        $trimmed = trim($line);
-        if ($trimmed === '') {
-            if ($inPara) {
-                $html .= "</p>\n";
-                $inPara = false;
-            }
-            continue;
-        }
-
-        // Headings
-        if (str_starts_with($trimmed, '### ')) {
-            if ($inPara) { $html .= "</p>\n"; $inPara = false; }
-            $html .= '<h3 style="color:var(--n); margin: 30px 0 12px; font-size:22px;">' . e(substr($trimmed, 4)) . "</h3>\n";
-        } elseif (str_starts_with($trimmed, '## ')) {
-            if ($inPara) { $html .= "</p>\n"; $inPara = false; }
-            $html .= '<h2 style="color:var(--n); margin: 35px 0 15px; font-size:26px;">' . e(substr($trimmed, 3)) . "</h2>\n";
-        } elseif (str_starts_with($trimmed, '- ') || str_starts_with($trimmed, '* ')) {
-            if ($inPara) { $html .= "</p>\n"; $inPara = false; }
-            $html .= '<li style="margin-left: 20px; margin-bottom: 8px; color:#475569;">' . e(substr($trimmed, 2)) . "</li>\n";
-        } else {
-            if (!$inPara) {
-                $html .= '<p style="margin-bottom: 20px; line-height: 1.85; font-size: 16px; color:#334155;">';
-                $inPara = true;
-            } else {
-                $html .= "<br>";
-            }
-            $html .= e($trimmed);
-        }
-    }
-
-    if ($inPara) {
-        $html .= "</p>\n";
-    }
-
-    return $html;
+    return render_markdown_content($text);
 }
 
 // Fetch related/recent blogs

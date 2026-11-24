@@ -37,7 +37,9 @@ $rows=db()->query('SELECT * FROM services ORDER BY sort_order')->fetchAll(); ?>
 <label>Title</label><input name="title" required value="<?=e($edit['title'])?>">
 <label>Slug (URL identifier - leave empty to auto-generate from title)</label><input name="slug" value="<?=e($edit['slug']??'')?>" placeholder="e.g. permanent-recruitment">
 <label>Short Description (Shown on cards & homepage)</label><textarea name="description" rows="3" required><?=e($edit['description'])?></textarea>
-<label>Detailed Content (Markdown & rich paragraphs supported)</label><textarea name="content" rows="8" placeholder="Comprehensive service overview, delivery methodology, benefits..."><?=e($edit['content']??'')?></textarea>
+<label style="font-weight:700; color:var(--n);">Detailed Content (Markdown & rich paragraphs supported)</label>
+<?= markdown_guide_html('serviceContentField') ?>
+<textarea name="content" id="serviceContentField" rows="10" placeholder="Comprehensive service overview, delivery methodology, benefits..."><?=e($edit['content']??'')?></textarea>
 <label>Image URL (Paste link OR upload below)</label>
 <div style="display:flex; gap:10px; align-items:center;">
     <input type="text" name="image_url" id="image_url_field" value="<?=e($edit['image_url'])?>" placeholder="https://...">
