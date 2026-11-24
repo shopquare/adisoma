@@ -1,5 +1,5 @@
 <?php require_once __DIR__.'/../includes/functions.php'; admin_only(); $cur=basename($_SERVER['SCRIPT_NAME']);
-$nav=['dashboard.php'=>'Dashboard','manage-jobs.php'=>'Jobs','manage-blogs.php'=>'Blogs','applications.php'=>'Applications','inquiries.php'=>'Inquiries','manage-services.php'=>'Services','manage-testimonials.php'=>'Testimonials','manage-stats.php'=>'Site Stats','manage-admins.php'=>'Admins','logs.php'=>'Logs']; ?>
+$nav = get_nav_links('admin'); ?>
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin | ADISOMA</title>
 <link rel="stylesheet" href="<?=BASE_URL?>/assets/css/style.css?v=<?=asset_v()?>">
 <link rel="stylesheet" href="<?=BASE_URL?>/assets/css/responsive.css?v=<?=asset_v()?>">
@@ -21,7 +21,7 @@ $nav=['dashboard.php'=>'Dashboard','manage-jobs.php'=>'Jobs','manage-blogs.php'=
         </div>
         <nav class="side-nav">
             <?php foreach($nav as $u=>$l): ?>
-                <a href="<?=$u?>" class="<?=$cur===$u?'active':''?>"><?=$l?></a>
+                <a href="<?=$u?>" class="<?=$cur===basename($u)?'active':''?>"><?=$l?></a>
             <?php endforeach; ?>
         </nav>
         <div class="side-bottom">

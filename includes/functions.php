@@ -222,6 +222,115 @@ function ensure_site_stats_table() {
 }
 ensure_site_stats_table();
 
+function ensure_nav_menu_table() {
+    static $done = false;
+    if ($done) return;
+    $done = true;
+    try {
+        db()->query("SELECT 1 FROM nav_items LIMIT 1");
+    } catch (Exception $e) {
+        try {
+            db()->exec("
+                CREATE TABLE IF NOT EXISTS nav_items(
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    title VARCHAR(100) NOT NULL,
+                    url VARCHAR(255) NOT NULL,
+                    menu_type ENUM('header', 'admin') NOT NULL DEFAULT 'header',
+                    sort_order INT DEFAULT 0,
+                    active TINYINT(1) DEFAULT 1,
+                    is_custom TINYINT(1) DEFAULT 0,
+                    INDEX(menu_type),
+                    INDEX(sort_order)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+            ");
+            
+            $count = (int)db()->query("SELECT COUNT(*) FROM nav_items WHERE menu_type='header'")->fetchColumn();
+            if ($count === 0) {
+                $defaults = [
+                    ['Home', 'index.php', 1],
+                    ['About', 'about.php', 2],
+                    ['Services', 'services.php', 3],
+                    ['Jobs', 'jobs.php', 4],
+                    ['Blog', 'blogs.php', 5],
+                    ['For Employers', 'employers.php', 6],
+                    ['Job Seekers', 'job-seekers.php', 7],
+                    ['Contact', 'contact.php', 8],
+                ];
+                $stmt = db()->prepare("INSERT INTO nav_items(title, url, menu_type, sort_order, active, is_custom) VALUES (?, ?, 'header', ?, 1, 0)");
+                foreach ($defaults as $d) {
+                    $stmt->execute($d);
+                }
+            }
+
+            $admCount = (int)db()->query("SELECT COUNT(*) FROM nav_items WHERE menu_type='admin'")->fetchColumn();
+            if ($admCount === 0) {
+                $adminDefaults = [
+                    ['Dashboard', 'dashboard.php', 1],
+                    ['Jobs', 'manage-jobs.php', 2],
+                    ['Blogs', 'manage-blogs.php', 3],
+                    ['Applications', 'applications.php', 4],
+                    ['Inquiries', 'inquiries.php', 5],
+                    ['Services', 'manage-services.php', 6],
+                    ['Testimonials', 'manage-testimonials.php', 7],
+                    ['Site Stats', 'manage-stats.php', 8],
+                    ['Menu Manager', 'manage-menu.php', 9],
+                    ['Admins', 'manage-admins.php', 10],
+                    ['Logs', 'logs.php', 11],
+                ];
+                $stmt = db()->prepare("INSERT INTO nav_items(title, url, menu_type, sort_order, active, is_custom) VALUES (?, ?, 'admin', ?, 1, 0)");
+                foreach ($adminDefaults as $d) {
+                    $stmt->execute($d);
+                }
+            }
+        } catch (Exception $ex) {
+            // Silently continue
+        }
+    }
+}
+ensure_nav_menu_table();
+
+function get_nav_links(string $type = 'header'): array {
+    ensure_nav_menu_table();
+    try {
+        $stmt = db()->prepare("SELECT * FROM nav_items WHERE menu_type = ? AND active = 1 ORDER BY sort_order ASC, id ASC");
+        $stmt->execute([$type]);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (!empty($rows)) {
+            $links = [];
+            foreach ($rows as $r) {
+                $links[$r['url']] = $r['title'];
+            }
+            return $links;
+        }
+    } catch (Exception $e) {}
+
+    if ($type === 'admin') {
+        return [
+            'dashboard.php'=>'Dashboard',
+            'manage-jobs.php'=>'Jobs',
+            'manage-blogs.php'=>'Blogs',
+            'applications.php'=>'Applications',
+            'inquiries.php'=>'Inquiries',
+            'manage-services.php'=>'Services',
+            'manage-testimonials.php'=>'Testimonials',
+            'manage-stats.php'=>'Site Stats',
+            'manage-menu.php'=>'Menu Manager',
+            'manage-admins.php'=>'Admins',
+            'logs.php'=>'Logs'
+        ];
+    }
+    return [
+        'index.php'=>'Home',
+        'about.php'=>'About',
+        'services.php'=>'Services',
+        'jobs.php'=>'Jobs',
+        'blogs.php'=>'Blog',
+        'employers.php'=>'For Employers',
+        'job-seekers.php'=>'Job Seekers',
+        'contact.php'=>'Contact'
+    ];
+}
+
 function asset_v(?string $override = null): string {
     static $v = null;
     if ($override !== null) {

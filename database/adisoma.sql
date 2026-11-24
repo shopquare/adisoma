@@ -37,6 +37,17 @@ CREATE TABLE site_stats (
     sort_order INT DEFAULT 0,
     active TINYINT(1) DEFAULT 1
 );
+CREATE TABLE nav_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(100) NOT NULL,
+    url VARCHAR(255) NOT NULL,
+    menu_type ENUM('header', 'admin') NOT NULL DEFAULT 'header',
+    sort_order INT DEFAULT 0,
+    active TINYINT(1) DEFAULT 1,
+    is_custom TINYINT(1) DEFAULT 0,
+    INDEX(menu_type),
+    INDEX(sort_order)
+);
 
 INSERT INTO services(title,description,image_url,sort_order) VALUES
 ('Permanent Recruitment','End-to-end sourcing, screening and placement of full-time talent.','https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=400&q=80',1),
@@ -60,6 +71,27 @@ INSERT INTO site_stats(metric,label,sort_order,active) VALUES
 ('100+','Clients',2,1),
 ('10+','Industries',3,1),
 ('24h','Response',4,1);
+
+INSERT INTO nav_items(title,url,menu_type,sort_order,active,is_custom) VALUES
+('Home','index.php','header',1,1,0),
+('About','about.php','header',2,1,0),
+('Services','services.php','header',3,1,0),
+('Jobs','jobs.php','header',4,1,0),
+('Blog','blogs.php','header',5,1,0),
+('For Employers','employers.php','header',6,1,0),
+('Job Seekers','job-seekers.php','header',7,1,0),
+('Contact','contact.php','header',8,1,0),
+('Dashboard','dashboard.php','admin',1,1,0),
+('Jobs','manage-jobs.php','admin',2,1,0),
+('Blogs','manage-blogs.php','admin',3,1,0),
+('Applications','applications.php','admin',4,1,0),
+('Inquiries','inquiries.php','admin',5,1,0),
+('Services','manage-services.php','admin',6,1,0),
+('Testimonials','manage-testimonials.php','admin',7,1,0),
+('Site Stats','manage-stats.php','admin',8,1,0),
+('Menu Manager','manage-menu.php','admin',9,1,0),
+('Admins','manage-admins.php','admin',10,1,0),
+('Logs','logs.php','admin',11,1,0);
 
 INSERT INTO blogs(title, slug, excerpt, content, image_url, author, status) VALUES
 ('Top Hiring Trends in 2026: Navigating the Modern Talent Landscape', 'top-hiring-trends-in-2026', 'Discover the key recruitment dynamics reshaping how companies attract, hire, and retain high-performing talent across IT and non-IT sectors.', 'The recruitment ecosystem is evolving at an unprecedented speed. In 2026, organizations are shifting from transactional hiring to relationship-driven talent partnerships.\n\n### 1. Skills-First Recruitment\nModern enterprises are valuing demonstrable practical skills, problem-solving capability, and cultural adaptability over traditional pedigree. Sourcing techniques now leverage behavioral assessments and project simulations to identify candidates who will thrive from day one.\n\n### 2. Flexible Workforce Models\nWith companies seeking agility, contract staffing and project-based talent solutions continue to surge. Organizations that leverage hybrid talent pipelines can quickly scale capacity without inflating fixed overheads.\n\n### 3. Accelerated Candidate Experience\nTop candidates have multiple options. A streamlined, transparent interview process is the single biggest differentiator between landing top talent and losing them to competitors.\n\nAt ADISOMA Solution, we help enterprises align their workforce strategy with market realities, ensuring sustainable organizational growth.', 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80', 'ADISOMA Team', 'published'),
