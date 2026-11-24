@@ -756,3 +756,95 @@ tr:hover td { background: #f8fafc; }
 .at label { display: block; margin: 18px 0 8px; font-weight: 600; color: #1e293b; font-size: 14px; }
 .at input, .at select, .at textarea { padding: 12px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; width: 100%; transition: all 0.25s; background: #f8fafc; }
 .at input:focus, .at select:focus, .at textarea:focus { border-color: var(--o); outline: none; background: #fff; box-shadow: 0 0 0 3px rgba(245,124,0,0.1); }
+
+/* =========================================
+   Responsive Pagination Component
+   ========================================= */
+.pagination-wrap {
+    margin-top: 45px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+.pagination-info {
+    font-size: 14px;
+    color: #64748b;
+    font-weight: 500;
+}
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.pagination li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.page-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+    height: 42px;
+    padding: 0 14px;
+    border-radius: 10px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #334155 !important;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+.page-link:hover:not(.disabled):not(.active) {
+    background: #f1f5f9;
+    color: var(--n) !important;
+    border-color: #94a3b8;
+    transform: translateY(-1px);
+}
+.page-link.active {
+    background: var(--o) !important;
+    color: #ffffff !important;
+    border-color: var(--o) !important;
+    box-shadow: 0 4px 12px rgba(245, 124, 0, 0.3);
+    cursor: default;
+}
+.page-link.disabled {
+    opacity: 0.45;
+    pointer-events: none;
+    cursor: not-allowed;
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    color: #94a3b8 !important;
+}
+.page-dots {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 30px;
+    height: 42px;
+    color: #94a3b8;
+    font-weight: bold;
+    user-select: none;
+}
+
+@media (max-width: 480px) {
+    .pagination {
+        gap: 5px;
+    }
+    .page-link {
+        min-width: 36px;
+        height: 38px;
+        padding: 0 10px;
+        font-size: 13px;
+        border-radius: 8px;
+    }
+}
