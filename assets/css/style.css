@@ -574,6 +574,21 @@ h2.t:after {
 .footer { background: #0f172a; color: #94a3b8; padding-top: 65px; }
 .footer a { display: block; color: #94a3b8; margin: 9px 0; transition: all 0.25s; font-size: 14px; }
 .footer a:hover { color: var(--o); transform: translateX(4px); }
+.footer-contact-line,
+.footer-contact-link {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0 !important;
+    color: #94a3b8 !important;
+    text-decoration: none;
+    font-size: 14px;
+    line-height: 1.5;
+    transition: all 0.25s ease;
+}
+.footer-contact-line { align-items: flex-start; }
+.footer-contact-link:hover { color: var(--o) !important; transform: translateX(4px); }
+.footer-contact-icon { font-size: 16px; flex-shrink: 0; line-height: 1; }
 .footer h4 { color: #fff; font-size: 17px; margin-bottom: 20px; position: relative; padding-bottom: 10px; font-weight: 600; }
 .footer h4::after { content: ''; position: absolute; left: 0; bottom: 0; width: 28px; height: 2px; background: var(--o); border-radius: 1px; }
 .logo-f { height: 60px; background: #fff; border-radius: 8px; padding: 8px 12px; margin-bottom: 18px; object-fit: contain; display: inline-block; }

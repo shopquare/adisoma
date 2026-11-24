@@ -4,9 +4,24 @@
 <div><h4>Company</h4><a href="<?=BASE_URL?>/about.php">About</a><a href="<?=BASE_URL?>/services.php">Services</a><a href="<?=BASE_URL?>/blogs.php">Insights & Blogs</a><a href="<?=BASE_URL?>/contact.php">Contact</a></div>
 <div><h4>Hiring</h4><a href="<?=BASE_URL?>/jobs.php">Job Openings</a><a href="<?=BASE_URL?>/it-recruitment.php">IT Recruitment</a><a href="<?=BASE_URL?>/non-it-recruitment.php">Non-IT Recruitment</a><a href="<?=BASE_URL?>/employers.php">Hire Talent</a></div>
 <div><h4>Contact</h4>
-<p style="margin:0 0 6px;">📍 <?=e(CO['address'])?></p>
-<p style="margin:0 0 6px;">📞 <a href="tel:<?=e(CO['phone'])?>" style="color:inherit; text-decoration:none;"><?=e(CO['phone'])?></a></p>
-<p style="margin:0 0 10px;">✉️ <a href="mailto:<?=e(CO['email'])?>" style="color:inherit; text-decoration:none;"><?=e(CO['email'])?></a></p>
+<div class="footer-contact-line" style="display:flex; align-items:flex-start; gap:10px; margin:8px 0; color:#94a3b8; font-size:14px; line-height:1.5;">
+    <span class="footer-contact-icon" style="font-size:16px; flex-shrink:0; line-height:1;">📍</span>
+    <span><?=e(CO['address'])?></span>
+</div>
+<a href="tel:<?=e(CO['phone'])?>" class="footer-contact-link" style="display:flex; align-items:center; gap:10px; margin:8px 0; color:#94a3b8; text-decoration:none; font-size:14px; line-height:1.5;">
+    <span class="footer-contact-icon" style="font-size:16px; flex-shrink:0; line-height:1;">📞</span>
+    <span><?=e(CO['phone'])?></span>
+</a>
+<?php if (!empty(CO['whatsapp'])): ?>
+<a href="https://wa.me/<?= preg_replace('/[^\d]/', '', CO['whatsapp']) ?>" target="_blank" rel="noopener noreferrer" class="footer-contact-link" style="display:flex; align-items:center; gap:10px; margin:8px 0; color:#94a3b8; text-decoration:none; font-size:14px; line-height:1.5;">
+    <span class="footer-contact-icon" style="font-size:16px; flex-shrink:0; line-height:1;">💬</span>
+    <span><?=e(CO['whatsapp'])?></span>
+</a>
+<?php endif; ?>
+<a href="mailto:<?=e(CO['email'])?>" class="footer-contact-link" style="display:flex; align-items:center; gap:10px; margin:8px 0; color:#94a3b8; text-decoration:none; font-size:14px; line-height:1.5;">
+    <span class="footer-contact-icon" style="font-size:16px; flex-shrink:0; line-height:1;">✉️</span>
+    <span><?=e(CO['email'])?></span>
+</a>
 <p class="soc"><?php
 $socs = [
     'linkedin' => 'LinkedIn',
