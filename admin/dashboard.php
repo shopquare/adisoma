@@ -9,6 +9,7 @@ $st = [
     ['label' => 'New Apps', 'count' => $q("SELECT COUNT(*) FROM applications WHERE status='new'"), 'icon' => '✨', 'link' => 'applications.php'],
     ['label' => 'Employers', 'count' => $q("SELECT COUNT(*) FROM inquiries WHERE type='employer'"), 'icon' => '🏢', 'link' => 'inquiries.php?type=employer'],
     ['label' => 'Messages', 'count' => $q("SELECT COUNT(*) FROM inquiries WHERE type='contact'"), 'icon' => '✉️', 'link' => 'inquiries.php?type=contact'],
+    ['label' => 'Blog Posts', 'count' => $q("SELECT COUNT(*) FROM blogs WHERE status='published'"), 'icon' => '📰', 'link' => 'manage-blogs.php'],
     ['label' => 'Testimonials', 'count' => $q("SELECT COUNT(*) FROM testimonials"), 'icon' => '💬', 'link' => 'manage-testimonials.php']
 ];
 

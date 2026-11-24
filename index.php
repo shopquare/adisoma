@@ -1,7 +1,8 @@
 <?php $title='Home'; include 'includes/header.php';
 $svc=db()->query('SELECT * FROM services WHERE active=1 ORDER BY sort_order LIMIT 6')->fetchAll();
 $jobs=db()->query("SELECT * FROM jobs WHERE status='published' ORDER BY id DESC LIMIT 4")->fetchAll(); 
-$testimonials=db()->query('SELECT * FROM testimonials WHERE active=1 ORDER BY id DESC')->fetchAll(); ?>
+$testimonials=db()->query('SELECT * FROM testimonials WHERE active=1 ORDER BY id DESC')->fetchAll();
+$latest_blogs=db()->query("SELECT * FROM blogs WHERE status='published' ORDER BY id DESC LIMIT 3")->fetchAll(); ?>
 
 <!-- Hero Section -->
 <section class="hero"><div class="wrap">
@@ -135,6 +136,46 @@ $testimonials=db()->query('SELECT * FROM testimonials WHERE active=1 ORDER BY id
 <?php endforeach; ?>
 <p style="text-align:center; margin-top:40px;"><a class="btn alt" style="background:#fff; color:var(--o) !important; border-color:var(--o);" href="jobs.php">View All Jobs</a></p>
 </div></section>
+
+<!-- Latest Insights & Blogs Section -->
+<?php if(!empty($latest_blogs)): ?>
+<section class="s"><div class="wrap">
+    <div class="process-subtitle" style="text-align:center;">FROM OUR DESK</div>
+    <h2 class="t" style="margin-top:10px;">Latest Insights & Articles</h2>
+    <div class="grid3">
+        <?php foreach($latest_blogs as $b): ?>
+        <article class="card" style="display:flex; flex-direction:column; padding:0; overflow:hidden;">
+            <a href="blog-detail.php?slug=<?=urlencode($b['slug'])?>" style="display:block; overflow:hidden;">
+                <?php if(!empty($b['image_url'])): ?>
+                    <img src="<?=e($b['image_url'])?>" alt="<?=e($b['title'])?>" style="width:100%; height:190px; object-fit:cover; margin-bottom:0; transition:transform 0.3s ease;">
+                <?php else: ?>
+                    <div style="width:100%; height:190px; background:#e2e8f0; display:flex; align-items:center; justify-content:center; font-size:32px;">📰</div>
+                <?php endif; ?>
+            </a>
+            <div style="padding:22px; display:flex; flex-direction:column; flex:1;">
+                <div style="font-size:12px; color:#64748b; margin-bottom:10px;">
+                    🗓️ <?=date('M d, Y', strtotime($b['created_at']))?> &middot; ✍️ <?=e($b['author'])?>
+                </div>
+                <h3 style="font-size:18px; line-height:1.4; margin-bottom:10px;">
+                    <a href="blog-detail.php?slug=<?=urlencode($b['slug'])?>" style="color:var(--n);">
+                        <?=e(mb_strimwidth($b['title'], 0, 65, '...'))?>
+                    </a>
+                </h3>
+                <p style="font-size:14px; color:#64748b; line-height:1.6; margin-bottom:20px; flex:1;">
+                    <?=e(mb_strimwidth($b['excerpt'] ?: strip_tags($b['content']), 0, 110, '...'))?>
+                </p>
+                <div style="margin-top:auto;">
+                    <a href="blog-detail.php?slug=<?=urlencode($b['slug'])?>" class="btn sm alt" style="width:100%; text-align:center;">Read More ➔</a>
+                </div>
+            </div>
+        </article>
+        <?php endforeach; ?>
+    </div>
+    <div class="btn-group" style="margin-top:35px;">
+        <a class="btn" href="blogs.php">View All Articles ➔</a>
+    </div>
+</div></section>
+<?php endif; ?>
 
 <!-- Stats Section -->
 <section class="stat"><div class="wrap grid4">

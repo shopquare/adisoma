@@ -6,6 +6,20 @@ CREATE TABLE jobs(id INT AUTO_INCREMENT PRIMARY KEY,title VARCHAR(150) NOT NULL,
 CREATE TABLE applications(id INT AUTO_INCREMENT PRIMARY KEY,job_id INT NULL,name VARCHAR(100) NOT NULL,email VARCHAR(120) NOT NULL,phone VARCHAR(30),experience VARCHAR(50),message TEXT,resume VARCHAR(100) NOT NULL,status ENUM('new','reviewed','shortlisted','rejected') DEFAULT 'new',created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,FOREIGN KEY(job_id) REFERENCES jobs(id) ON DELETE SET NULL);
 CREATE TABLE inquiries(id INT AUTO_INCREMENT PRIMARY KEY,type ENUM('contact','employer') NOT NULL,name VARCHAR(100) NOT NULL,email VARCHAR(120) NOT NULL,phone VARCHAR(30),company VARCHAR(120),subject VARCHAR(150),message TEXT NOT NULL,status ENUM('new','read','closed') DEFAULT 'new',created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
 CREATE TABLE testimonials(id INT AUTO_INCREMENT PRIMARY KEY,author_name VARCHAR(100) NOT NULL,content TEXT NOT NULL,rating INT DEFAULT 5,active TINYINT(1) DEFAULT 1,created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE blogs(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(200) NOT NULL,
+    slug VARCHAR(200) UNIQUE NOT NULL,
+    excerpt TEXT,
+    content MEDIUMTEXT NOT NULL,
+    image_url VARCHAR(255) DEFAULT '',
+    author VARCHAR(100) DEFAULT 'ADISOMA Team',
+    status ENUM('draft','published') NOT NULL DEFAULT 'published',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX(status),
+    INDEX(slug)
+);
 CREATE TABLE admin_logs (
     id INT AUTO_INCREMENT PRIMARY KEY,
     admin_id INT,
@@ -33,3 +47,8 @@ INSERT INTO testimonials(author_name,content,rating) VALUES
 ('Rahul Desai','ADISOMA is a strategic thinker and one of the wisest teams to work with. I started working with them a couple of years ago and now it\'s a more over friendly relation over businesses. I highly recommend working with them to get the best out of everything.', 5),
 ('Priya Sharma','The recruitment process was incredibly smooth. They understood our specific requirements perfectly and delivered top-tier candidates within days. Our engineering team scaled rapidly without compromising on quality.', 5),
 ('Amit Patel','Outstanding service! Their IT staffing solutions are unmatched. We struggled for months to fill a niche developer role, and ADISOMA found the perfect match in less than a week.', 5);
+
+INSERT INTO blogs(title, slug, excerpt, content, image_url, author, status) VALUES
+('Top Hiring Trends in 2026: Navigating the Modern Talent Landscape', 'top-hiring-trends-in-2026', 'Discover the key recruitment dynamics reshaping how companies attract, hire, and retain high-performing talent across IT and non-IT sectors.', 'The recruitment ecosystem is evolving at an unprecedented speed. In 2026, organizations are shifting from transactional hiring to relationship-driven talent partnerships.\n\n### 1. Skills-First Recruitment\nModern enterprises are valuing demonstrable practical skills, problem-solving capability, and cultural adaptability over traditional pedigree. Sourcing techniques now leverage behavioral assessments and project simulations to identify candidates who will thrive from day one.\n\n### 2. Flexible Workforce Models\nWith companies seeking agility, contract staffing and project-based talent solutions continue to surge. Organizations that leverage hybrid talent pipelines can quickly scale capacity without inflating fixed overheads.\n\n### 3. Accelerated Candidate Experience\nTop candidates have multiple options. A streamlined, transparent interview process is the single biggest differentiator between landing top talent and losing them to competitors.\n\nAt ADISOMA Solution, we help enterprises align their workforce strategy with market realities, ensuring sustainable organizational growth.', 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80', 'ADISOMA Team', 'published'),
+('How to Build an Agile IT Engineering Team on Demand', 'how-to-build-an-agile-it-engineering-team', 'Learn strategic staffing approaches to assemble niche software, cloud, and DevOps engineering teams without lengthy hiring bottlenecks.', 'Scaling technical teams is one of the most critical challenges facing CTOs and engineering managers today. Niche skill sets in full-stack architecture, cloud engineering, and cybersecurity are in high demand.\n\n### Defining the Core vs. Specialized Roles\nWhen scaling up engineering teams, it is important to clearly delineate foundational full-time positions from specialized, temporary consulting needs. By blending permanent core engineers with agile contract specialists, businesses can accelerate release cycles while controlling costs.\n\n### Effective Pre-screening is Vital\nScreening developers goes beyond reviewing CV keywords. Evaluating code maintainability, system design familiarity, and communication skills ensures immediate productivity once onboarding starts.\n\nPartnering with a specialized IT recruitment partner like ADISOMA gives companies rapid access to thoroughly screened talent communities.', 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80', 'Tech Recruitment Desk', 'published');
+
