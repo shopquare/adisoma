@@ -91,7 +91,7 @@ function e($s){return htmlspecialchars((string)$s,ENT_QUOTES,'UTF-8');}
 function csrf(){return '<input type="hidden" name="csrf" value="'.e($_SESSION['csrf']).'">';}
 function csrf_ok(){return isset($_POST['csrf'])&&hash_equals($_SESSION['csrf'],$_POST['csrf']);}
 function redirect($u){header("Location: $u");exit;}
-function flash($m=null,$t='ok'){if($m){$_SESSION['f']=[$m,$t];return;}if(!empty($_SESSION['f'])){[$m,$t]=$_SESSION['f'];unset($_SESSION['f']);return "<div class='alert $t'>".e($m)."</div>";}return '';}
+function flash($m=null,$t='ok'){if($m){$_SESSION['f']=[$m,$t];return;}if(!empty($_SESSION['f'])){[$m,$t]=$_SESSION['f'];unset($_SESSION['f']);return "<div class='alert $t' role='alert' aria-live='polite'>".e($m)."</div>";}return '';}
 function admin_only(){if(empty($_SESSION['admin']))redirect('login.php');}
 function post($k){return trim($_POST[$k]??'');}
 
@@ -114,6 +114,7 @@ function save_inquiry(string $type):string{
 }
 function save_application(int $jobId):string{
  if(!csrf_ok())return 'Invalid session. Reload and retry.';
+ if(post('website')!=='')return ''; // honeypot spam protection
  $n=post('name');$em=post('email');
  if($n===''||!filter_var($em,FILTER_VALIDATE_EMAIL))return 'Please enter a valid name and email.';
  $f=$_FILES['resume']??null;
@@ -121,6 +122,24 @@ function save_application(int $jobId):string{
  if($f['size']>2*1024*1024)return 'Resume must be under 2 MB.';
  $ext=strtolower(pathinfo($f['name'],PATHINFO_EXTENSION));
  if(!in_array($ext,['pdf','doc','docx']))return 'Resume must be PDF, DOC or DOCX.';
+ 
+ // Magic byte MIME validation
+ if (function_exists('finfo_open') && is_file($f['tmp_name'])) {
+     $finfo = finfo_open(FILEINFO_MIME_TYPE);
+     $mime = finfo_file($finfo, $f['tmp_name']);
+     finfo_close($finfo);
+     $validMimes = [
+         'application/pdf',
+         'application/msword',
+         'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+         'application/octet-stream',
+         'application/zip' // docx is a zipped XML package
+     ];
+     if ($mime && !in_array($mime, $validMimes, true)) {
+         return 'Uploaded file does not match a valid PDF, DOC or DOCX document.';
+     }
+ }
+
  $name=bin2hex(random_bytes(12)).'.'.$ext;
  if(!is_dir(__DIR__.'/../uploads/resumes/')) mkdir(__DIR__.'/../uploads/resumes/', 0777, true);
  if(!move_uploaded_file($f['tmp_name'],__DIR__.'/../uploads/resumes/'.$name))return 'Upload failed.';

@@ -23,9 +23,11 @@ if($_SERVER['REQUEST_METHOD']==='POST'){ if(!csrf_ok())die('Bad token'); $a=post
   }
   flash('Service saved.');}
  if($a==='delete'){
-     $title = db()->query("SELECT title FROM services WHERE id=$id")->fetchColumn();
+     $st = db()->prepare("SELECT title FROM services WHERE id = ?");
+     $st->execute([$id]);
+     $title = $st->fetchColumn();
      db()->prepare('DELETE FROM services WHERE id=?')->execute([$id]);
-     log_action('Deleted', 'Service', $id, $title);
+     log_action('Deleted', 'Service', $id, (string)$title);
      flash('Service deleted.');
  }
  redirect('manage-services.php');}

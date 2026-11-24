@@ -9,6 +9,7 @@ $svc=db()->query('SELECT * FROM services WHERE active=1 ORDER BY sort_order')->f
         <a href="<?= $s_url ?>" style="display:block; overflow:hidden;">
             <img src="<?= e($s['image_url'] ?: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=600&q=80') ?>" 
                  alt="<?= e($s['title']) ?>" 
+                 loading="lazy"
                  onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=600&q=80';"
                  style="width:100%; height:200px; object-fit:cover; display:block; transition:transform 0.3s ease;">
         </a>

@@ -3,7 +3,14 @@ if($_SERVER['REQUEST_METHOD']==='POST'){ if(!csrf_ok())die('Bad token'); $a=post
  if($a==='save'&&post('author_name')!==''&&post('content')!==''){ $d=[post('author_name'),post('content'),(int)post('rating'),isset($_POST['active'])?1:0];
   if($id){ db()->prepare('UPDATE testimonials SET author_name=?,content=?,rating=?,active=? WHERE id=?')->execute([...$d,$id]); log_action('Updated', 'Testimonial', $id, post('author_name')); }
   else { db()->prepare('INSERT INTO testimonials(author_name,content,rating,active) VALUES(?,?,?,?)')->execute($d); log_action('Created', 'Testimonial', db()->lastInsertId(), post('author_name')); }flash('Testimonial saved.');}
- if($a==='delete'){ $t=db()->query("SELECT author_name FROM testimonials WHERE id=$id")->fetchColumn(); db()->prepare('DELETE FROM testimonials WHERE id=?')->execute([$id]); log_action('Deleted', 'Testimonial', $id, $t); flash('Testimonial deleted.'); }
+ if($a==='delete'){ 
+     $st = db()->prepare("SELECT author_name FROM testimonials WHERE id = ?");
+     $st->execute([$id]);
+     $t = $st->fetchColumn(); 
+     db()->prepare('DELETE FROM testimonials WHERE id=?')->execute([$id]); 
+     log_action('Deleted', 'Testimonial', $id, (string)$t); 
+     flash('Testimonial deleted.'); 
+ }
  redirect('manage-testimonials.php');}
 include '_header.php'; $edit=['id'=>0,'author_name'=>'','content'=>'','rating'=>5,'active'=>1];
 if(isset($_GET['edit'])){$s=db()->prepare('SELECT * FROM testimonials WHERE id=?');$s->execute([(int)$_GET['edit']]);$edit=$s->fetch()?:$edit;}

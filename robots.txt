@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /uploads/resumes/
+Disallow: /config/
+Disallow: /database/
+Allow: /
+
+Sitemap: https://adisoma.infy.click/sitemap.xml

@@ -9,7 +9,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $u = post('username');
         $p = $_POST['password'] ?? '';
         
-        if ($setup) {
+        $maxAttempts = 5;
+        $lockoutSeconds = 900; // 15 minutes
+        $now = time();
+
+        if (isset($_SESSION['lockout_time']) && $_SESSION['lockout_time'] > $now) {
+            $remaining = ceil(($_SESSION['lockout_time'] - $now) / 60);
+            $err = "Too many failed login attempts. Security lockout active. Please retry in {$remaining} minute(s).";
+        } elseif ($setup) {
             if ($u === '' || strlen($p) < 8) {
                 $err = 'Username is required and password must be at least 8 characters.';
             } else {
@@ -22,14 +29,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $s = db()->prepare('SELECT * FROM admins WHERE username = ?');
             $s->execute([$u]);
             $a = $s->fetch();
-            usleep(300000); // Prevent timing attacks
+            usleep(250000); // Mitigate timing analysis
             
             if ($a && password_verify($p, $a['password'])) {
+                unset($_SESSION['failed_attempts'], $_SESSION['lockout_time']);
                 session_regenerate_id(true);
                 $_SESSION['admin'] = $a['id'];
+                log_action('Logged In', 'Admin', $a['id'], "User {$a['username']} authenticated");
                 redirect('dashboard.php');
+            } else {
+                $attempts = ($_SESSION['failed_attempts'] ?? 0) + 1;
+                $_SESSION['failed_attempts'] = $attempts;
+                if ($attempts >= $maxAttempts) {
+                    $_SESSION['lockout_time'] = $now + $lockoutSeconds;
+                    $err = 'Too many failed login attempts. Access is locked for 15 minutes.';
+                } else {
+                    $left = $maxAttempts - $attempts;
+                    $err = "Invalid username or password. ({$left} attempt" . ($left === 1 ? '' : 's') . " remaining)";
+                }
             }
-            $err = 'Invalid username or password.';
         }
     }
 }

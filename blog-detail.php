@@ -21,6 +21,10 @@ if (!$blog) {
 
 $title = $blog['title'];
 $sub = 'Published on ' . date('F d, Y', strtotime($blog['created_at'])) . ' by ' . $blog['author'];
+$meta_desc = mb_strimwidth(strip_tags($blog['excerpt'] ?: $blog['content']), 0, 160, '...');
+$og_image = !empty($blog['image_url']) ? $blog['image_url'] : (BASE_URL . '/assets/images/adisoma-logo.png');
+$og_type = 'article';
+$canonical_url = 'https://adisoma.infy.click/blog-detail.php?slug=' . urlencode($blog['slug']);
 include 'includes/header.php';
 
 // Format content helper (handles markdown style headings, bold text, and paragraphs)

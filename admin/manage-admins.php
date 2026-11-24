@@ -14,7 +14,9 @@ if($_SERVER['REQUEST_METHOD']==='POST'){ if(!csrf_ok())die('Bad token'); $a=post
      $id = (int)post('id');
      if($id === $_SESSION['admin']) { flash('Cannot delete yourself.','err'); }
      else {
-         $adm = db()->query("SELECT username FROM admins WHERE id=$id")->fetchColumn();
+         $st = db()->prepare('SELECT username FROM admins WHERE id = ?');
+         $st->execute([$id]);
+         $adm = $st->fetchColumn();
          db()->prepare('DELETE FROM admins WHERE id=?')->execute([$id]);
          log_action('Deleted', 'Admin', $id, "Username: $adm");
          flash('Admin deleted.');

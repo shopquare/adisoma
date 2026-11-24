@@ -49,9 +49,9 @@ $blogs = $stmt->fetchAll();
                 <article class="card" style="display:flex; flex-direction:column; padding:0; overflow:hidden;">
                     <a href="blog-detail.php?slug=<?= urlencode($b['slug']) ?>" style="display:block; overflow:hidden;">
                         <?php if (!empty($b['image_url'])): ?>
-                            <img src="<?= e($b['image_url']) ?>" alt="<?= e($b['title']) ?>" style="width:100%; height:200px; object-fit:cover; margin-bottom:0; transition:transform 0.3s ease;">
+                            <img src="<?= e($b['image_url']) ?>" alt="<?= e($b['title']) ?>" loading="lazy" style="width:100%; height:200px; object-fit:cover; margin-bottom:0; transition:transform 0.3s ease;">
                         <?php else: ?>
-                            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" alt="Article" style="width:100%; height:200px; object-fit:cover; margin-bottom:0;">
+                            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" alt="Article" loading="lazy" style="width:100%; height:200px; object-fit:cover; margin-bottom:0;">
                         <?php endif; ?>
                     </a>
                     

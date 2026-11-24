@@ -11,7 +11,7 @@ $title='Apply'.($job?': '.$job['title']:'');$sub='Submit your application and re
     <div style="font-size:14px;"><?=e($job['location'])?> &middot; <?=e($job['job_type'])?> &middot; <?=e($job['category'])?></div>
 </div>
 <?php endif; ?>
-<form class="f" method="post" enctype="multipart/form-data" data-validate><?=csrf()?>
+<form class="f" method="post" enctype="multipart/form-data" data-validate><?=csrf()?><input class="hp" name="website" tabindex="-1" autocomplete="off">
 <label>Full Name *</label><input name="name" required maxlength="100"><label>Email *</label><input type="email" name="email" required>
 <label>Phone</label><input name="phone" maxlength="30"><label>Total Experience</label><input name="experience" placeholder="e.g. 3 years">
 <label>Resume (PDF/DOC/DOCX, max 2 MB) *</label><input type="file" name="resume" accept=".pdf,.doc,.docx" required>

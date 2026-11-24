@@ -22,6 +22,9 @@ if (!$service) {
 
 $title = $service['title'];
 $sub = 'Specialized Talent Acquisition & Workforce Solutions';
+$meta_desc = mb_strimwidth(strip_tags($service['description'] ?: $service['content']), 0, 160, '...');
+$og_image = !empty($service['image_url']) ? $service['image_url'] : (BASE_URL . '/assets/images/adisoma-logo.png');
+$canonical_url = 'https://adisoma.infy.click/service-detail.php?slug=' . urlencode($service['slug'] ?: $service['id']);
 include 'includes/header.php';
 
 // Fetch all other active services for the sidebar

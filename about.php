@@ -15,7 +15,7 @@
     <h3>Our Mission</h3><p>To connect people and organizations through honest, efficient and human-centred hiring processes that create lasting value.</p>
 </div>
 <div class="card" style="text-align:center;">
-    <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=400&q=80" alt="Vision">
+    <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=400&q=80" alt="Vision" loading="lazy">
     <h3>Our Vision</h3><p>To be the most trusted global talent partner, helping careers flourish and businesses scale rapidly and sustainably.</p>
 </div>
 </div>

@@ -1,3 +1,4 @@
+</main>
 <footer class="footer"><div class="wrap grid4">
 <div><img src="<?=BASE_URL?>/assets/images/adisoma-logo.png" class="logo-f" alt=""><p><?=e(CO['tagline']??'Your Talent Partner for a Brighter Tomorrow.')?></p></div>
 <div><h4>Company</h4><a href="<?=BASE_URL?>/about.php">About</a><a href="<?=BASE_URL?>/services.php">Services</a><a href="<?=BASE_URL?>/blogs.php">Insights & Blogs</a><a href="<?=BASE_URL?>/contact.php">Contact</a></div>

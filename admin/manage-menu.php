@@ -44,7 +44,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $seq++;
                     }
                     // Re-fetch orders
-                    $curOrder = (int)db()->query("SELECT sort_order FROM nav_items WHERE id = $id")->fetchColumn();
+                    $stCur = db()->prepare("SELECT sort_order FROM nav_items WHERE id = ?");
+                    $stCur->execute([$id]);
+                    $curOrder = (int)$stCur->fetchColumn();
                     if ($dir === 'up') {
                         $adjStmt = db()->prepare("SELECT id, sort_order FROM nav_items WHERE menu_type = ? AND sort_order < ? ORDER BY sort_order DESC LIMIT 1");
                     } else {
@@ -119,7 +121,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 flash('Menu item updated successfully.');
             } else {
                 if ($sort <= 0) {
-                    $max = (int)db()->query("SELECT COALESCE(MAX(sort_order), 0) FROM nav_items WHERE menu_type = '$postTab'")->fetchColumn();
+                    $stMax = db()->prepare("SELECT COALESCE(MAX(sort_order), 0) FROM nav_items WHERE menu_type = ?");
+                    $stMax->execute([$postTab]);
+                    $max = (int)$stMax->fetchColumn();
                     $sort = $max + 1;
                 }
                 $st = db()->prepare("INSERT INTO nav_items (title, url, menu_type, sort_order, active, is_custom) VALUES (?, ?, ?, ?, ?, 1)");

@@ -35,7 +35,7 @@ $latest_blogs=db()->query("SELECT * FROM blogs WHERE status='published' ORDER BY
         <a class="btn" href="about.php">Learn More ➔</a>
     </div>
     <div class="about-img-box">
-        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80" class="about-img" alt="Team">
+        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80" class="about-img" alt="Team" loading="lazy">
     </div>
 </div>
 </div></section>
@@ -50,6 +50,7 @@ $latest_blogs=db()->query("SELECT * FROM blogs WHERE status='published' ORDER BY
         <a href="<?= $s_url ?>" style="display:block; overflow:hidden;">
             <img src="<?= e($s['image_url'] ?: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=600&q=80') ?>" 
                  alt="<?= e($s['title']) ?>" 
+                 loading="lazy"
                  onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=600&q=80';"
                  style="width:100%; height:200px; object-fit:cover; display:block; transition:transform 0.3s ease;">
         </a>
@@ -166,7 +167,7 @@ $latest_blogs=db()->query("SELECT * FROM blogs WHERE status='published' ORDER BY
         <article class="card" style="display:flex; flex-direction:column; padding:0; overflow:hidden;">
             <a href="blog-detail.php?slug=<?=urlencode($b['slug'])?>" style="display:block; overflow:hidden;">
                 <?php if(!empty($b['image_url'])): ?>
-                    <img src="<?=e($b['image_url'])?>" alt="<?=e($b['title'])?>" style="width:100%; height:190px; object-fit:cover; margin-bottom:0; transition:transform 0.3s ease;">
+                    <img src="<?=e($b['image_url'])?>" alt="<?=e($b['title'])?>" loading="lazy" style="width:100%; height:190px; object-fit:cover; margin-bottom:0; transition:transform 0.3s ease;">
                 <?php else: ?>
                     <div style="width:100%; height:190px; background:#e2e8f0; display:flex; align-items:center; justify-content:center; font-size:32px;">📰</div>
                 <?php endif; ?>

@@ -12,7 +12,14 @@ if($_SERVER['REQUEST_METHOD']==='POST'){ if(!csrf_ok())die('Bad token'); $a=post
   }
   flash('Job saved.');}
  if($a==='toggle'){ db()->prepare("UPDATE jobs SET status=IF(status='published','draft','published') WHERE id=?")->execute([$id]); log_action('Toggled Status', 'Job', $id); }
- if($a==='delete'){ $t=db()->query("SELECT title FROM jobs WHERE id=$id")->fetchColumn(); db()->prepare('DELETE FROM jobs WHERE id=?')->execute([$id]); log_action('Deleted', 'Job', $id, $t); flash('Job deleted.'); }
+ if($a==='delete'){ 
+     $st = db()->prepare("SELECT title FROM jobs WHERE id = ?");
+     $st->execute([$id]);
+     $t = $st->fetchColumn(); 
+     db()->prepare('DELETE FROM jobs WHERE id=?')->execute([$id]); 
+     log_action('Deleted', 'Job', $id, (string)$t); 
+     flash('Job deleted.'); 
+ }
  redirect('manage-jobs.php');}
 include '_header.php';
 if(isset($_GET['new'])||isset($_GET['edit'])){ $j=['id'=>0,'title'=>'','category'=>'IT','location'=>'','job_type'=>'Full-time','experience'=>'','salary'=>'','description'=>'','status'=>'draft'];
