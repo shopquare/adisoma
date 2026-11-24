@@ -1,0 +1,4 @@
+<?php $title='Services'; $sub='Complete hiring solutions for every need'; include 'includes/header.php';
+$svc=db()->query('SELECT * FROM services WHERE active=1 ORDER BY sort_order')->fetchAll(); ?>
+<section class="s"><div class="wrap grid3"><?php foreach($svc as $s): ?><div class="card"><?php if(!empty($s['image_url'])): ?><img src="<?=e($s['image_url'])?>" alt="Service" style="width:100%; height:180px; object-fit:cover; border-radius:8px; margin-bottom:20px;"><?php else: ?><img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=400&q=80" alt="Service" style="width:100%; height:180px; object-fit:cover; border-radius:8px; margin-bottom:20px;"><?php endif; ?><h3><?=e($s['title'])?></h3><p><?=e($s['description'])?></p></div><?php endforeach; ?></div></section>
+<?php include 'includes/footer.php'; ?>

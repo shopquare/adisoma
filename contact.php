@@ -1,0 +1,9 @@
+<?php require_once 'includes/functions.php';
+if($_SERVER['REQUEST_METHOD']==='POST'){$err=save_inquiry('contact');if($err==='')flash('Thank you! We will get back to you soon.');else flash($err,'err');redirect(basename($_SERVER['SCRIPT_NAME']));}
+$title='Contact Us';$sub='We would love to hear from you';include 'includes/header.php'; ?>
+<section class="s"><div class="wrap"><?=flash()?><p style="text-align:center"><?=e(CO['address'])?> &middot; <?=e(CO['phone'])?> &middot; <?=e(CO['email'])?></p>
+<form class="f" method="post" data-validate><?=csrf()?><input class="hp" name="website" tabindex="-1" autocomplete="off">
+<label>Name *</label><input name="name" required maxlength="100"><label>Email *</label><input type="email" name="email" required><label>Phone</label><input name="phone">
+<label>Subject</label><input name="subject">
+<label>Message / Requirements *</label><textarea name="message" rows="5" required></textarea><button class="btn" type="submit">Send Message</button></form></div></section>
+<?php include 'includes/footer.php'; ?>
