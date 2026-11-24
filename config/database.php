@@ -1,25 +1,45 @@
 <?php
-$is_local = in_array($_SERVER['HTTP_HOST'] ?? '', ['localhost', '127.0.0.1'])
-    || str_starts_with($_SERVER['HTTP_HOST'] ?? '', 'localhost:')
-    || str_starts_with($_SERVER['HTTP_HOST'] ?? '', '127.0.0.1:')
-    || (php_sapi_name() === 'cli' && getenv('APP_ENV') !== 'production');
-
-if ($is_local) {
-    define('DB_HOST', 'localhost');
-    define('DB_NAME', 'adisoma');
-    define('DB_USER', 'root');
-    define('DB_PASS', '');
-    define('BASE_URL', '/adisoma');
-} else {
-    define('DB_HOST', 'sql213.infinityfree.com');
-    define('DB_NAME', 'if0_43325536_adisoma');
-    define('DB_USER', 'if0_43325536');
-    define('DB_PASS', 'cLqnZJLlBJMVl9');
-    define('BASE_URL', '');
+// Load environment-specific overrides if present (e.g. injected at deploy time)
+if (file_exists(__DIR__ . '/env.php')) {
+    require_once __DIR__ . '/env.php';
 }
-const CO=['name'=>'ADISOMA Solution','address'=>'Mumbai, Maharashtra','phone'=>'+91 98765 43210','email'=>'info@adisomasolution.com',
- 'facebook'=>'#','linkedin'=>'#','twitter'=>'#','instagram'=>'#'];
+
+// Fallback to environment variables or local development defaults
+defined('DB_HOST') || define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
+defined('DB_NAME') || define('DB_NAME', getenv('DB_NAME') ?: 'adisoma');
+defined('DB_USER') || define('DB_USER', getenv('DB_USER') ?: 'root');
+defined('DB_PASS') || define('DB_PASS', getenv('DB_PASS') ?: '');
+defined('BASE_URL') || define('BASE_URL', getenv('BASE_URL') ?: '/adisoma');
+
+const CO = [
+    'name' => 'ADISOMA Solution',
+    'address' => 'Mumbai, Maharashtra',
+    'phone' => '+91 98765 43210',
+    'email' => 'info@adisomasolution.com',
+    'facebook' => '#',
+    'linkedin' => '#',
+    'twitter' => '#',
+    'instagram' => '#'
+];
+
 session_start();
-if(empty($_SESSION['csrf']))$_SESSION['csrf']=bin2hex(random_bytes(16));
-function db():PDO{static $p;if(!$p){$p=new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME.';charset=utf8mb4',DB_USER,DB_PASS,
- [PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC,PDO::ATTR_EMULATE_PREPARES=>false]);}return $p;}
+if (empty($_SESSION['csrf'])) {
+    $_SESSION['csrf'] = bin2hex(random_bytes(16));
+}
+
+function db(): PDO {
+    static $p;
+    if (!$p) {
+        $p = new PDO(
+            'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8mb4',
+            DB_USER,
+            DB_PASS,
+            [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES => false
+            ]
+        );
+    }
+    return $p;
+}

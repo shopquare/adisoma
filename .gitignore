@@ -1,5 +1,8 @@
-# Environment & sensitive credentials (optional: un-comment if keeping config/database.php private)
-# config/database.php
+# Environment & sensitive credentials
+config/env.php
+.env
+.env.*
+.env.local
 
 # User uploads (keep directory structure and security files)
 /uploads/resumes/*
