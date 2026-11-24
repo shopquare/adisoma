@@ -69,41 +69,62 @@ $fromIndex = $totalBlogs > 0 ? $offset + 1 : 0;
 $toIndex   = min($offset + $perPage, $totalBlogs);
 ?>
 
-<section class="s"><div class="wrap">
-    <!-- Filter and Sort Bar -->
-    <form class="filters" method="get" style="max-width:720px; margin: 0 auto 35px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-        <input name="q" placeholder="Search insights & articles..." value="<?= e($q) ?>" style="flex:1; min-width:220px;">
-        
-        <select name="sort" onchange="this.form.submit()" style="flex:0 0 auto; min-width:160px; padding:12px 14px; border:1px solid #cbd5e1; border-radius:8px; background:#f8fafc; font-family:inherit; font-size:14px; color:#1e293b;">
-            <option value="newest" <?= $sort === 'newest' ? 'selected' : '' ?>>Newest First</option>
-            <option value="oldest" <?= $sort === 'oldest' ? 'selected' : '' ?>>Oldest First</option>
-            <option value="title" <?= $sort === 'title' ? 'selected' : '' ?>>Title (A-Z)</option>
-        </select>
-        
-        <button class="btn" style="margin:0; flex:0 0 auto; white-space:nowrap;">Search</button>
-        <?php if ($q !== '' || $sort !== 'newest'): ?>
-            <a href="blogs.php" class="btn alt" style="margin:0; flex:0 0 auto; white-space:nowrap; text-decoration:none;">Reset</a>
-        <?php endif; ?>
-    </form>
+<section class="s" style="padding-top:40px; padding-bottom:80px;"><div class="wrap">
+    <!-- Modern Inline Search & Sort Toolbar -->
+    <div class="blog-search-bar-wrap">
+        <form class="blog-search-bar" method="get">
+            <div class="search-input-group">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" name="q" placeholder="Search insights & articles..." value="<?= e($q) ?>" autocomplete="off">
+                <?php if ($q !== ''): ?>
+                    <a href="blogs.php<?= $sort !== 'newest' ? '?sort=' . urlencode($sort) : '' ?>" class="search-clear-btn" title="Clear search">&times;</a>
+                <?php endif; ?>
+            </div>
+
+            <div class="search-divider"></div>
+
+            <div class="sort-select-group">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="4" y1="6" x2="20" y2="6"></line>
+                    <line x1="7" y1="12" x2="17" y2="12"></line>
+                    <line x1="10" y1="18" x2="14" y2="18"></line>
+                </svg>
+                <select name="sort" onchange="this.form.submit()" aria-label="Sort articles">
+                    <option value="newest" <?= $sort === 'newest' ? 'selected' : '' ?>>Newest First</option>
+                    <option value="oldest" <?= $sort === 'oldest' ? 'selected' : '' ?>>Oldest First</option>
+                    <option value="title" <?= $sort === 'title' ? 'selected' : '' ?>>Title (A-Z)</option>
+                </select>
+            </div>
+
+            <button type="submit" class="search-submit-btn">Search</button>
+
+            <?php if ($q !== '' || $sort !== 'newest'): ?>
+                <a href="blogs.php" class="search-reset-btn" title="Reset all filters">Reset</a>
+            <?php endif; ?>
+        </form>
+    </div>
 
     <!-- Results Header / Summary -->
-    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:28px;">
-        <p style="margin:0; font-size:15px; color:#64748b; font-weight:600;">
+    <div class="blog-meta-bar">
+        <div class="blog-meta-count">
             <?php if ($totalBlogs === 0): ?>
                 No articles found matching your criteria
             <?php elseif ($q !== ''): ?>
-                Showing results for "<strong><?= e($q) ?></strong>" (<?= $totalBlogs ?> found)
+                Showing results for "<strong><?= e($q) ?></strong>" &bull; <span><?= $totalBlogs ?> article<?= $totalBlogs === 1 ? '' : 's' ?> found</span>
             <?php elseif ($totalPages > 1): ?>
-                Showing <strong style="color:var(--n);"><?= $fromIndex ?>–<?= $toIndex ?></strong> of <strong style="color:var(--n);"><?= $totalBlogs ?></strong> articles
+                Showing <strong class="highlight"><?= $fromIndex ?>–<?= $toIndex ?></strong> of <strong class="highlight"><?= $totalBlogs ?></strong> articles
             <?php else: ?>
-                <strong style="color:var(--n);"><?= $totalBlogs ?></strong> article<?= $totalBlogs === 1 ? '' : 's' ?> available
+                <strong class="highlight"><?= $totalBlogs ?></strong> article<?= $totalBlogs === 1 ? '' : 's' ?> available
             <?php endif; ?>
-        </p>
+        </div>
 
         <?php if ($totalPages > 1): ?>
-            <span style="font-size:13px; color:#64748b; background:#f1f5f9; padding:4px 10px; border-radius:6px; font-weight:600;">
+            <div class="blog-meta-badge">
                 Page <?= $page ?> of <?= $totalPages ?>
-            </span>
+            </div>
         <?php endif; ?>
     </div>
 
@@ -120,34 +141,34 @@ $toIndex   = min($offset + $perPage, $totalBlogs);
     <?php else: ?>
         <div class="grid3">
             <?php foreach ($blogs as $b): ?>
-                <article class="card" style="display:flex; flex-direction:column; padding:0; overflow:hidden;">
-                    <a href="blog-detail.php?slug=<?= urlencode($b['slug']) ?>" style="display:block; overflow:hidden;">
+                <article class="card blog-card">
+                    <a href="blog-detail.php?slug=<?= urlencode($b['slug']) ?>" class="blog-card-media">
                         <?php if (!empty($b['image_url'])): ?>
-                            <img src="<?= e($b['image_url']) ?>" alt="<?= e($b['title']) ?>" loading="lazy" style="width:100%; height:200px; object-fit:cover; margin-bottom:0; transition:transform 0.3s ease;">
+                            <img src="<?= e($b['image_url']) ?>" alt="<?= e($b['title']) ?>" loading="lazy">
                         <?php else: ?>
-                            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" alt="Article" loading="lazy" style="width:100%; height:200px; object-fit:cover; margin-bottom:0;">
+                            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80" alt="Article" loading="lazy">
                         <?php endif; ?>
                     </a>
                     
-                    <div style="padding:24px; display:flex; flex-direction:column; flex:1;">
-                        <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px; font-size:13px; color:#64748b;">
+                    <div class="blog-card-body">
+                        <div class="blog-card-meta">
                             <span>🗓️ <?= date('M d, Y', strtotime($b['created_at'])) ?></span>
                             <span>&middot;</span>
                             <span>✍️ <?= e($b['author']) ?></span>
                         </div>
                         
-                        <h3 style="font-size:19px; line-height:1.4; margin-bottom:10px;">
-                            <a href="blog-detail.php?slug=<?= urlencode($b['slug']) ?>" style="color:var(--n); text-decoration:none;">
+                        <h3 class="blog-card-title">
+                            <a href="blog-detail.php?slug=<?= urlencode($b['slug']) ?>">
                                 <?= e($b['title']) ?>
                             </a>
                         </h3>
                         
-                        <p style="font-size:14px; color:#64748b; line-height:1.6; margin-bottom:20px; flex:1;">
+                        <p class="blog-card-excerpt">
                             <?= e(mb_strimwidth($b['excerpt'] ?: strip_tags($b['content']), 0, 130, '...')) ?>
                         </p>
                         
                         <div style="margin-top:auto;">
-                            <a href="blog-detail.php?slug=<?= urlencode($b['slug']) ?>" class="btn sm alt" style="width:100%; text-align:center; display:block;">
+                            <a href="blog-detail.php?slug=<?= urlencode($b['slug']) ?>" class="blog-read-btn">
                                 Read Article ➔
                             </a>
                         </div>
