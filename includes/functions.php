@@ -96,3 +96,53 @@ function ensure_blogs_table() {
     }
 }
 ensure_blogs_table();
+
+function asset_v(?string $override = null): string {
+    static $v = null;
+    if ($override !== null) {
+        $v = $override;
+        return $v;
+    }
+    if ($v !== null) return $v;
+    $file = __DIR__ . '/../config/cache_version.txt';
+    if (file_exists($file)) {
+        $content = trim((string)@file_get_contents($file));
+        if ($content !== '') {
+            $v = $content;
+            return $v;
+        }
+    }
+    $v = '2.3';
+    return $v;
+}
+
+function asset_v_time(): string {
+    $v = asset_v();
+    if (is_numeric($v) && (int)$v > 1600000000) {
+        return date('d M Y, h:i A', (int)$v);
+    }
+    $file = __DIR__ . '/../config/cache_version.txt';
+    if (file_exists($file)) {
+        $mtime = @filemtime($file);
+        if ($mtime) {
+            return date('d M Y, h:i A', $mtime);
+        }
+    }
+    return date('d M Y, h:i A');
+}
+
+function clear_all_cache(): string {
+    $new_v = (string)time();
+    $file = __DIR__ . '/../config/cache_version.txt';
+    @file_put_contents($file, $new_v);
+    asset_v($new_v);
+
+    if (function_exists('opcache_reset')) {
+        @opcache_reset();
+    }
+    if (function_exists('clearstatcache')) {
+        @clearstatcache(true);
+    }
+
+    return $new_v;
+}

@@ -149,9 +149,18 @@
         align-items: flex-start;
         gap: 14px;
     }
-    .dash-head .btn {
+    .dash-actions {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .dash-actions form,
+    .dash-actions form button,
+    .dash-actions .btn {
         width: 100%;
         text-align: center;
+        justify-content: center;
     }
 
     /* Grids to single column */

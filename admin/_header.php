@@ -1,8 +1,8 @@
 <?php require_once __DIR__.'/../includes/functions.php'; admin_only(); $cur=basename($_SERVER['SCRIPT_NAME']);
 $nav=['dashboard.php'=>'Dashboard','manage-jobs.php'=>'Jobs','manage-blogs.php'=>'Blogs','applications.php'=>'Applications','inquiries.php'=>'Inquiries','manage-services.php'=>'Services','manage-testimonials.php'=>'Testimonials','manage-admins.php'=>'Admins','logs.php'=>'Logs']; ?>
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin | ADISOMA</title>
-<link rel="stylesheet" href="<?=BASE_URL?>/assets/css/style.css?v=2.2">
-<link rel="stylesheet" href="<?=BASE_URL?>/assets/css/responsive.css?v=2.2">
+<link rel="stylesheet" href="<?=BASE_URL?>/assets/css/style.css?v=<?=asset_v()?>">
+<link rel="stylesheet" href="<?=BASE_URL?>/assets/css/responsive.css?v=<?=asset_v()?>">
 </head><body>
 <div class="admin-mobile-bar">
     <a href="dashboard.php" class="admin-mobile-logo">

@@ -1,4 +1,19 @@
-<?php include '_header.php'; 
+<?php
+require_once __DIR__ . '/../includes/functions.php';
+admin_only();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && post('action') === 'clear_cache') {
+    if (!csrf_ok()) {
+        flash('Invalid session token. Please try again.', 'err');
+    } else {
+        $new_v = clear_all_cache();
+        log_action('Cleared', 'Cache', 0, "New asset version: {$new_v}");
+        flash("Cache cleared successfully! Dynamic asset version updated to {$new_v}. All desktop & mobile browsers will now fetch the latest styles and scripts.", 'ok');
+    }
+    redirect('dashboard.php');
+}
+
+include '_header.php'; 
 $q=fn($s)=>(int)db()->query($s)->fetchColumn();
 
 // Enhanced array with Icons and Links to the respective pages
@@ -21,9 +36,18 @@ $recent=db()->query('SELECT a.*,j.title jt FROM applications a LEFT JOIN jobs j 
         <h1 style="margin:0 0 6px;">Dashboard Overview</h1>
         <span style="color:#64748b; font-size:14px;">Welcome back to your administration portal</span>
     </div>
-    <a href="../index.php" target="_blank" class="btn sm" style="background:#0284c7; border-color:#0284c7; color:#fff !important; box-shadow:0 4px 14px rgba(2, 132, 199, 0.25); white-space:nowrap;">
-        View Live Site ➔
-    </a>
+    <div class="dash-actions" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <form method="POST" style="margin:0; display:inline;" onsubmit="return confirm('Clear system and browser cache? This will force all browsers to load updated assets.');">
+            <?=csrf()?>
+            <input type="hidden" name="action" value="clear_cache">
+            <button type="submit" class="btn sm" style="background:#f59e0b; border-color:#f59e0b; color:#fff !important; box-shadow:0 4px 14px rgba(245, 158, 11, 0.25); display:inline-flex; align-items:center; justify-content:center; gap:6px; font-weight:600; cursor:pointer;">
+                <span>🧹</span> Clear Cache
+            </button>
+        </form>
+        <a href="../index.php" target="_blank" class="btn sm" style="background:#0284c7; border-color:#0284c7; color:#fff !important; box-shadow:0 4px 14px rgba(2, 132, 199, 0.25); white-space:nowrap; display:inline-flex; align-items:center; justify-content:center; font-weight:600;">
+            View Live Site ➔
+        </a>
+    </div>
 </div>
 
 <!-- Clickable, attractive stat cards -->
@@ -37,6 +61,28 @@ $recent=db()->query('SELECT a.*,j.title jt FROM applications a LEFT JOIN jobs j 
         </div>
     </a>
 <?php endforeach; ?>
+</div>
+
+<!-- System Performance & Cache Management Card -->
+<div class="card" style="margin-top:25px; padding:20px 24px; background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+    <div style="display:flex; align-items:center; gap:14px;">
+        <div style="width:44px; height:44px; border-radius:10px; background:#fef3c7; color:#d97706; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0;">⚡</div>
+        <div>
+            <h4 style="margin:0 0 4px; font-size:15px; color:#1e293b; font-weight:700;">Cache & Asset Performance</h4>
+            <div style="font-size:13px; color:#64748b; line-height:1.5;">
+                Active Asset Version: <strong style="color:#0284c7;"><?= e(asset_v()) ?></strong>
+                &bull; Last Cleared: <strong><?= e(asset_v_time()) ?></strong>
+                &bull; OPcache: <span style="display:inline-block; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600; background:<?= function_exists('opcache_reset') ? '#dcfce7; color:#15803d' : '#f1f5f9; color:#64748b' ?>;"><?= function_exists('opcache_reset') ? 'Active' : 'Standard' ?></span>
+            </div>
+        </div>
+    </div>
+    <form method="POST" style="margin:0;" onsubmit="return confirm('Purge server and browser caches? All visitors will instantly receive newly updated styles and scripts.');">
+        <?=csrf()?>
+        <input type="hidden" name="action" value="clear_cache">
+        <button type="submit" class="btn sm" style="background:#f59e0b; border-color:#f59e0b; color:#fff !important; font-weight:600; padding:9px 18px; border-radius:8px; box-shadow:0 2px 10px rgba(245, 158, 11, 0.25); display:inline-flex; align-items:center; gap:6px; cursor:pointer;">
+            <span>🧹</span> Purge Cache Now
+        </button>
+    </form>
 </div>
 
 <h2 style="margin-top:40px; border-bottom:2px solid #eee; padding-bottom:10px;">Recent Applications</h2>
