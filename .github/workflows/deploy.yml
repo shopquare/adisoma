@@ -34,7 +34,9 @@ jobs:
           FTP_TARGET_DIR: ${{ secrets.FTP_TARGET_DIR || 'htdocs/' }}
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq lftp
-          lftp -p "$FTP_PORT" -u "$FTP_USERNAME","$FTP_PASSWORD" "$FTP_SERVER" << 'EOF'
+          TARGET_DIR="${FTP_TARGET_DIR:-htdocs/}"
+          echo "Target directory is: $TARGET_DIR"
+          lftp -p "$FTP_PORT" -u "$FTP_USERNAME","$FTP_PASSWORD" "$FTP_SERVER" << EOF
             set ftp:ssl-allow no
             set ftp:use-site-chmod false
             set mirror:set-permissions false
@@ -50,6 +52,6 @@ jobs:
               --exclude-glob README.md \
               --exclude-glob uploads/resumes/* \
               --exclude-glob uploads/images/* \
-              ./ "$FTP_TARGET_DIR"
+              ./ "$TARGET_DIR"
             quit
-          EOF
+EOF
