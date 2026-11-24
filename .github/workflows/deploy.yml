@@ -36,14 +36,15 @@ jobs:
           sudo apt-get update -qq && sudo apt-get install -y -qq lftp
           TARGET_DIR="${FTP_TARGET_DIR:-htdocs/}"
           echo "Target directory is: $TARGET_DIR"
-          lftp -p "$FTP_PORT" -u "$FTP_USERNAME","$FTP_PASSWORD" "$FTP_SERVER" << EOF
-            set ftp:ssl-allow no
-            set ftp:use-site-chmod false
-            set mirror:set-permissions false
-            set mirror:overwrite on
-            set xfer:clobber on
-            set net:timeout 30
-            set net:max-retries 3
+          lftp -c "
+            set ftp:ssl-allow no;
+            set ftp:use-site-chmod false;
+            set mirror:set-permissions false;
+            set mirror:overwrite on;
+            set xfer:clobber on;
+            set net:timeout 30;
+            set net:max-retries 3;
+            open -p \"$FTP_PORT\" -u \"$FTP_USERNAME\",\"$FTP_PASSWORD\" \"$FTP_SERVER\";
             mirror --reverse --verbose --transfer-all --overwrite --no-perms --no-umask \
               --exclude-glob .git* \
               --exclude-glob .git*/** \
@@ -52,6 +53,5 @@ jobs:
               --exclude-glob README.md \
               --exclude-glob uploads/resumes/* \
               --exclude-glob uploads/images/* \
-              ./ "$TARGET_DIR"
-            quit
-EOF
+              ./ \"$TARGET_DIR\";
+          "
