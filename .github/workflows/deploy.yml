@@ -38,9 +38,11 @@ jobs:
             set ftp:ssl-allow no
             set ftp:use-site-chmod false
             set mirror:set-permissions false
-            set net:timeout 20
+            set mirror:overwrite on
+            set xfer:clobber on
+            set net:timeout 30
             set net:max-retries 3
-            mirror --reverse --verbose --no-perms --no-umask \
+            mirror --reverse --verbose --transfer-all --overwrite --no-perms --no-umask \
               --exclude-glob .git* \
               --exclude-glob .git*/** \
               --exclude-glob .github/** \
