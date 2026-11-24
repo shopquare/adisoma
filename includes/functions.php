@@ -1,5 +1,92 @@
 <?php
 require_once __DIR__.'/../config/database.php';
+
+// Auto-create site_settings table if missing and seed default values
+function ensure_site_settings_table() {
+    static $done = false;
+    if ($done) return;
+    $done = true;
+    try {
+        db()->query("SELECT 1 FROM site_settings LIMIT 1");
+    } catch (Exception $e) {
+        try {
+            db()->exec("
+                CREATE TABLE IF NOT EXISTS site_settings (
+                    setting_key VARCHAR(50) PRIMARY KEY,
+                    setting_value TEXT,
+                    category VARCHAR(30) DEFAULT 'general',
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+            ");
+            
+            $defaults = [
+                ['name', 'ADISOMA Solution', 'company'],
+                ['tagline', 'Your Talent Partner for a Brighter Tomorrow.', 'company'],
+                ['address', 'Mumbai, Maharashtra', 'contact'],
+                ['phone', '+91 98765 43210', 'contact'],
+                ['whatsapp', '+91 98765 43210', 'contact'],
+                ['email', 'info@adisomasolution.com', 'contact'],
+                ['hours', 'Mon - Sat: 9:00 AM - 6:00 PM', 'contact'],
+                ['maps_url', '', 'contact'],
+                ['facebook', 'https://facebook.com', 'social'],
+                ['linkedin', 'https://linkedin.com', 'social'],
+                ['twitter', 'https://x.com', 'social'],
+                ['instagram', 'https://instagram.com', 'social'],
+                ['youtube', '', 'social']
+            ];
+            $stmt = db()->prepare("INSERT IGNORE INTO site_settings (setting_key, setting_value, category) VALUES (?, ?, ?)");
+            foreach ($defaults as $d) {
+                $stmt->execute($d);
+            }
+        } catch (Exception $ex) {}
+    }
+}
+ensure_site_settings_table();
+
+function get_site_settings(bool $forceRefresh = false): array {
+    static $settings = null;
+    if ($settings !== null && !$forceRefresh) return $settings;
+    
+    $defaults = defined('CO_DEFAULTS') ? CO_DEFAULTS : [
+        'name' => 'ADISOMA Solution',
+        'tagline' => 'Your Talent Partner for a Brighter Tomorrow.',
+        'address' => 'Mumbai, Maharashtra',
+        'phone' => '+91 98765 43210',
+        'whatsapp' => '+91 98765 43210',
+        'email' => 'info@adisomasolution.com',
+        'hours' => 'Mon - Sat: 9:00 AM - 6:00 PM',
+        'maps_url' => '',
+        'facebook' => 'https://facebook.com',
+        'linkedin' => 'https://linkedin.com',
+        'twitter' => 'https://x.com',
+        'instagram' => 'https://instagram.com',
+        'youtube' => ''
+    ];
+
+    try {
+        ensure_site_settings_table();
+        $stmt = db()->query("SELECT setting_key, setting_value FROM site_settings");
+        $rows = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+        if (!empty($rows)) {
+            $settings = array_merge($defaults, $rows);
+            return $settings;
+        }
+    } catch (Exception $e) {}
+
+    $settings = $defaults;
+    return $settings;
+}
+
+if (!defined('CO')) {
+    define('CO', get_site_settings());
+}
+
+function co(string $key = '', $default = '') {
+    $all = get_site_settings();
+    if ($key === '') return $all;
+    return $all[$key] ?? $default;
+}
+
 function e($s){return htmlspecialchars((string)$s,ENT_QUOTES,'UTF-8');}
 function csrf(){return '<input type="hidden" name="csrf" value="'.e($_SESSION['csrf']).'">';}
 function csrf_ok(){return isset($_POST['csrf'])&&hash_equals($_SESSION['csrf'],$_POST['csrf']);}
@@ -437,8 +524,9 @@ function ensure_nav_menu_table() {
                     ['Testimonials', 'manage-testimonials.php', 7],
                     ['Site Stats', 'manage-stats.php', 8],
                     ['Menu Manager', 'manage-menu.php', 9],
-                    ['Admins', 'manage-admins.php', 10],
-                    ['Logs', 'logs.php', 11],
+                    ['Site Settings', 'manage-settings.php', 10],
+                    ['Admins', 'manage-admins.php', 11],
+                    ['Logs', 'logs.php', 12],
                 ];
                 $stmt = db()->prepare("INSERT INTO nav_items(title, url, menu_type, sort_order, active, is_custom) VALUES (?, ?, 'admin', ?, 1, 0)");
                 foreach ($adminDefaults as $d) {
@@ -449,6 +537,13 @@ function ensure_nav_menu_table() {
             // Silently continue
         }
     }
+
+    try {
+        $hasSettings = (int)db()->query("SELECT COUNT(*) FROM nav_items WHERE url='manage-settings.php' AND menu_type='admin'")->fetchColumn();
+        if ($hasSettings === 0) {
+            db()->exec("INSERT INTO nav_items(title, url, menu_type, sort_order, active, is_custom) VALUES ('Site Settings', 'manage-settings.php', 'admin', 10, 1, 0)");
+        }
+    } catch (Exception $ex) {}
 }
 ensure_nav_menu_table();
 
@@ -478,6 +573,7 @@ function get_nav_links(string $type = 'header'): array {
             'manage-testimonials.php'=>'Testimonials',
             'manage-stats.php'=>'Site Stats',
             'manage-menu.php'=>'Menu Manager',
+            'manage-settings.php'=>'Site Settings',
             'manage-admins.php'=>'Admins',
             'logs.php'=>'Logs'
         ];

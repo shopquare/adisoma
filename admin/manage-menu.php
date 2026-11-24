@@ -170,8 +170,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ['Testimonials', 'manage-testimonials.php', 7],
                 ['Site Stats', 'manage-stats.php', 8],
                 ['Menu Manager', 'manage-menu.php', 9],
-                ['Admins', 'manage-admins.php', 10],
-                ['Logs', 'logs.php', 11],
+                ['Site Settings', 'manage-settings.php', 10],
+                ['Admins', 'manage-admins.php', 11],
+                ['Logs', 'logs.php', 12],
             ];
         }
         $stmt = db()->prepare("INSERT INTO nav_items (title, url, menu_type, sort_order, active, is_custom) VALUES (?, ?, ?, ?, 1, 0)");

@@ -48,6 +48,12 @@ CREATE TABLE nav_items (
     INDEX(menu_type),
     INDEX(sort_order)
 );
+CREATE TABLE site_settings (
+    setting_key VARCHAR(50) PRIMARY KEY,
+    setting_value TEXT,
+    category VARCHAR(30) DEFAULT 'general',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
 
 INSERT INTO services(title,description,image_url,sort_order) VALUES
 ('Permanent Recruitment','End-to-end sourcing, screening and placement of full-time talent.','https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=400&q=80',1),
@@ -90,8 +96,24 @@ INSERT INTO nav_items(title,url,menu_type,sort_order,active,is_custom) VALUES
 ('Testimonials','manage-testimonials.php','admin',7,1,0),
 ('Site Stats','manage-stats.php','admin',8,1,0),
 ('Menu Manager','manage-menu.php','admin',9,1,0),
-('Admins','manage-admins.php','admin',10,1,0),
-('Logs','logs.php','admin',11,1,0);
+('Site Settings','manage-settings.php','admin',10,1,0),
+('Admins','manage-admins.php','admin',11,1,0),
+('Logs','logs.php','admin',12,1,0);
+
+INSERT INTO site_settings (setting_key, setting_value, category) VALUES
+('name', 'ADISOMA Solution', 'company'),
+('tagline', 'Your Talent Partner for a Brighter Tomorrow.', 'company'),
+('address', 'Mumbai, Maharashtra', 'contact'),
+('phone', '+91 98765 43210', 'contact'),
+('whatsapp', '+91 98765 43210', 'contact'),
+('email', 'info@adisomasolution.com', 'contact'),
+('hours', 'Mon - Sat: 9:00 AM - 6:00 PM', 'contact'),
+('maps_url', '', 'contact'),
+('facebook', 'https://facebook.com', 'social'),
+('linkedin', 'https://linkedin.com', 'social'),
+('twitter', 'https://x.com', 'social'),
+('instagram', 'https://instagram.com', 'social'),
+('youtube', '', 'social');
 
 INSERT INTO blogs(title, slug, excerpt, content, image_url, author, status) VALUES
 ('Top Hiring Trends in 2026: Navigating the Modern Talent Landscape', 'top-hiring-trends-in-2026', 'Discover the key recruitment dynamics reshaping how companies attract, hire, and retain high-performing talent across IT and non-IT sectors.', 'The recruitment ecosystem is evolving at an unprecedented speed. In 2026, organizations are shifting from transactional hiring to relationship-driven talent partnerships.\n\n### 1. Skills-First Recruitment\nModern enterprises are valuing demonstrable practical skills, problem-solving capability, and cultural adaptability over traditional pedigree. Sourcing techniques now leverage behavioral assessments and project simulations to identify candidates who will thrive from day one.\n\n### 2. Flexible Workforce Models\nWith companies seeking agility, contract staffing and project-based talent solutions continue to surge. Organizations that leverage hybrid talent pipelines can quickly scale capacity without inflating fixed overheads.\n\n### 3. Accelerated Candidate Experience\nTop candidates have multiple options. A streamlined, transparent interview process is the single biggest differentiator between landing top talent and losing them to competitors.\n\nAt ADISOMA Solution, we help enterprises align their workforce strategy with market realities, ensuring sustainable organizational growth.', 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80', 'ADISOMA Team', 'published'),

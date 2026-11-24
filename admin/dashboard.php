@@ -28,7 +28,8 @@ $st = [
     ['label' => 'Blog Posts', 'count' => $q("SELECT COUNT(*) FROM blogs WHERE status='published'"), 'icon' => '📰', 'link' => 'manage-blogs.php'],
     ['label' => 'Testimonials', 'count' => $q("SELECT COUNT(*) FROM testimonials"), 'icon' => '💬', 'link' => 'manage-testimonials.php'],
     ['label' => 'Site Stats', 'count' => $q("SELECT COUNT(*) FROM site_stats WHERE active=1"), 'icon' => '📊', 'link' => 'manage-stats.php'],
-    ['label' => 'Menu Links', 'count' => $q("SELECT COUNT(*) FROM nav_items WHERE menu_type='header' AND active=1"), 'icon' => '🧭', 'link' => 'manage-menu.php']
+    ['label' => 'Menu Links', 'count' => $q("SELECT COUNT(*) FROM nav_items WHERE menu_type='header' AND active=1"), 'icon' => '🧭', 'link' => 'manage-menu.php'],
+    ['label' => 'Contact & Info', 'count' => 'Live', 'icon' => '⚙️', 'link' => 'manage-settings.php']
 ];
 
 $recent=db()->query('SELECT a.*,j.title jt FROM applications a LEFT JOIN jobs j ON j.id=a.job_id ORDER BY a.id DESC LIMIT 5')->fetchAll(); 

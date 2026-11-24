@@ -11,16 +11,23 @@ defined('DB_USER') || define('DB_USER', getenv('DB_USER') ?: 'root');
 defined('DB_PASS') || define('DB_PASS', getenv('DB_PASS') ?: '');
 defined('BASE_URL') || define('BASE_URL', getenv('BASE_URL') ?: '/adisoma');
 
-const CO = [
-    'name' => 'ADISOMA Solution',
-    'address' => 'Mumbai, Maharashtra',
-    'phone' => '+91 98765 43210',
-    'email' => 'info@adisomasolution.com',
-    'facebook' => '#',
-    'linkedin' => '#',
-    'twitter' => '#',
-    'instagram' => '#'
-];
+if (!defined('CO_DEFAULTS')) {
+    define('CO_DEFAULTS', [
+        'name' => 'ADISOMA Solution',
+        'tagline' => 'Your Talent Partner for a Brighter Tomorrow.',
+        'address' => 'Mumbai, Maharashtra',
+        'phone' => '+91 98765 43210',
+        'whatsapp' => '+91 98765 43210',
+        'email' => 'info@adisomasolution.com',
+        'hours' => 'Mon - Sat: 9:00 AM - 6:00 PM',
+        'maps_url' => '',
+        'facebook' => 'https://facebook.com',
+        'linkedin' => 'https://linkedin.com',
+        'twitter' => 'https://x.com',
+        'instagram' => 'https://instagram.com',
+        'youtube' => ''
+    ]);
+}
 
 session_start();
 if (empty($_SESSION['csrf'])) {
