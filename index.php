@@ -7,31 +7,34 @@ $testimonials=db()->query('SELECT * FROM testimonials WHERE active=1 ORDER BY id
 <section class="hero"><div class="wrap">
 <h1>Connect. Hire. <span>Grow.</span></h1>
 <p>ADISOMA Solution is your premier talent partner for a brighter tomorrow, matching skilled people with growing businesses through modern recruitment strategies.</p>
-<a class="btn" href="jobs.php">Find a Job</a><a class="btn alt" href="employers.php" style="margin-left:15px;">Hire Talent</a>
+<div class="btn-group">
+    <a class="btn" href="jobs.php">Find a Job</a>
+    <a class="btn alt" href="employers.php">Hire Talent</a>
+</div>
 </div></section>
 
 <!-- About / Intro Section -->
 <section class="s"><div class="wrap">
-<div style="display:flex; gap:40px; align-items:center; flex-wrap:wrap;">
-    <div style="flex:1; min-width:300px;">
+<div class="about-grid">
+    <div class="about-content">
         <span class="process-subtitle">ABOUT ADISOMA SOLUTIONS</span>
-        <h2 style="color:var(--n); font-size:36px; margin-top:10px; margin-bottom:20px; font-weight:700; line-height:1.3;">Reliable & Cost Efficient<br>Recruitment Services</h2>
-        <p style="font-size:16px; color:var(--g); line-height:1.8; margin-bottom:30px;">ADISOMA Solutions Pvt. Ltd. is your trusted partner in comprehensive HR Consulting, IT Recruitment & Staffing Solutions. With an unwavering commitment to excellence, we have been serving businesses across industries with top-notch IT & NON IT recruitment services.</p>
+        <h2 style="color:var(--n); font-size:34px; margin-top:10px; margin-bottom:20px; font-weight:700; line-height:1.3;">Reliable & Cost Efficient<br>Recruitment Services</h2>
+        <p style="font-size:16px; color:var(--g); line-height:1.8; margin-bottom:25px;">ADISOMA Solutions Pvt. Ltd. is your trusted partner in comprehensive HR Consulting, IT Recruitment & Staffing Solutions. With an unwavering commitment to excellence, we have been serving businesses across industries with top-notch IT & NON IT recruitment services.</p>
         
-        <div style="display:flex; gap:20px; margin-bottom:30px; flex-wrap:wrap;">
-            <div style="display:flex; align-items:center; gap:15px;">
-                <div style="font-size:30px; color:var(--o);">📋</div>
-                <div style="font-weight:600; color:var(--n); line-height:1.2;">Understand Your<br>Needs</div>
+        <div class="about-features">
+            <div class="about-feat">
+                <div style="font-size:28px; color:var(--o);">📋</div>
+                <div style="font-weight:600; color:var(--n); line-height:1.3;">Understand Your<br>Needs</div>
             </div>
-            <div style="display:flex; align-items:center; gap:15px;">
-                <div style="font-size:30px; color:var(--o);">🎯</div>
-                <div style="font-weight:600; color:var(--n); line-height:1.2;">Find the Perfect<br>Candidate</div>
+            <div class="about-feat">
+                <div style="font-size:28px; color:var(--o);">🎯</div>
+                <div style="font-weight:600; color:var(--n); line-height:1.3;">Find the Perfect<br>Candidate</div>
             </div>
         </div>
-        <a class="btn" href="about.php">LEARN MORE</a>
+        <a class="btn" href="about.php">Learn More ➔</a>
     </div>
-    <div style="flex:1; min-width:300px; text-align:center;">
-        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80" style="width:100%; max-width:500px; border-radius:50% 0 50% 50%; box-shadow:0 15px 40px rgba(0,0,0,0.1); border:8px solid #fff;" alt="Team">
+    <div class="about-img-box">
+        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80" class="about-img" alt="Team">
     </div>
 </div>
 </div></section>
