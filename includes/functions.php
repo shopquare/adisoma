@@ -189,6 +189,39 @@ function ensure_services_schema() {
 }
 ensure_services_schema();
 
+function ensure_site_stats_table() {
+    static $done = false;
+    if ($done) return;
+    $done = true;
+    try {
+        db()->query("SELECT 1 FROM site_stats LIMIT 1");
+    } catch (Exception $e) {
+        try {
+            db()->exec("
+                CREATE TABLE IF NOT EXISTS site_stats(
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    metric VARCHAR(50) NOT NULL,
+                    label VARCHAR(100) NOT NULL,
+                    sort_order INT DEFAULT 0,
+                    active TINYINT(1) DEFAULT 1
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+            ");
+            
+            $count = (int)db()->query("SELECT COUNT(*) FROM site_stats")->fetchColumn();
+            if ($count === 0) {
+                $stmt = db()->prepare("INSERT INTO site_stats(metric, label, sort_order, active) VALUES (?, ?, ?, 1)");
+                $stmt->execute(['500+', 'Placements', 1]);
+                $stmt->execute(['100+', 'Clients', 2]);
+                $stmt->execute(['10+', 'Industries', 3]);
+                $stmt->execute(['24h', 'Response', 4]);
+            }
+        } catch (Exception $ex) {
+            // Silently continue
+        }
+    }
+}
+ensure_site_stats_table();
+
 function asset_v(?string $override = null): string {
     static $v = null;
     if ($override !== null) {

@@ -30,6 +30,13 @@ CREATE TABLE admin_logs (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(admin_id) REFERENCES admins(id) ON DELETE SET NULL
 );
+CREATE TABLE site_stats (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    metric VARCHAR(50) NOT NULL,
+    label VARCHAR(100) NOT NULL,
+    sort_order INT DEFAULT 0,
+    active TINYINT(1) DEFAULT 1
+);
 
 INSERT INTO services(title,description,image_url,sort_order) VALUES
 ('Permanent Recruitment','End-to-end sourcing, screening and placement of full-time talent.','https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=400&q=80',1),
@@ -47,6 +54,12 @@ INSERT INTO testimonials(author_name,content,rating) VALUES
 ('Rahul Desai','ADISOMA is a strategic thinker and one of the wisest teams to work with. I started working with them a couple of years ago and now it\'s a more over friendly relation over businesses. I highly recommend working with them to get the best out of everything.', 5),
 ('Priya Sharma','The recruitment process was incredibly smooth. They understood our specific requirements perfectly and delivered top-tier candidates within days. Our engineering team scaled rapidly without compromising on quality.', 5),
 ('Amit Patel','Outstanding service! Their IT staffing solutions are unmatched. We struggled for months to fill a niche developer role, and ADISOMA found the perfect match in less than a week.', 5);
+
+INSERT INTO site_stats(metric,label,sort_order,active) VALUES
+('500+','Placements',1,1),
+('100+','Clients',2,1),
+('10+','Industries',3,1),
+('24h','Response',4,1);
 
 INSERT INTO blogs(title, slug, excerpt, content, image_url, author, status) VALUES
 ('Top Hiring Trends in 2026: Navigating the Modern Talent Landscape', 'top-hiring-trends-in-2026', 'Discover the key recruitment dynamics reshaping how companies attract, hire, and retain high-performing talent across IT and non-IT sectors.', 'The recruitment ecosystem is evolving at an unprecedented speed. In 2026, organizations are shifting from transactional hiring to relationship-driven talent partnerships.\n\n### 1. Skills-First Recruitment\nModern enterprises are valuing demonstrable practical skills, problem-solving capability, and cultural adaptability over traditional pedigree. Sourcing techniques now leverage behavioral assessments and project simulations to identify candidates who will thrive from day one.\n\n### 2. Flexible Workforce Models\nWith companies seeking agility, contract staffing and project-based talent solutions continue to surge. Organizations that leverage hybrid talent pipelines can quickly scale capacity without inflating fixed overheads.\n\n### 3. Accelerated Candidate Experience\nTop candidates have multiple options. A streamlined, transparent interview process is the single biggest differentiator between landing top talent and losing them to competitors.\n\nAt ADISOMA Solution, we help enterprises align their workforce strategy with market realities, ensuring sustainable organizational growth.', 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80', 'ADISOMA Team', 'published'),

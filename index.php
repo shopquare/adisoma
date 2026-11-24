@@ -197,8 +197,15 @@ $latest_blogs=db()->query("SELECT * FROM blogs WHERE status='published' ORDER BY
 <?php endif; ?>
 
 <!-- Stats Section -->
-<section class="stat"><div class="wrap grid4">
-<div><b>500+</b>Placements</div><div><b>100+</b>Clients</div><div><b>10+</b>Industries</div><div><b>24h</b>Response</div>
+<?php 
+$site_stats = db()->query("SELECT * FROM site_stats WHERE active=1 ORDER BY sort_order ASC, id ASC")->fetchAll();
+if (!empty($site_stats)):
+?>
+<section class="stat" id="stats"><div class="wrap" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:24px;">
+<?php foreach($site_stats as $st_item): ?>
+    <div><b><?= e($st_item['metric']) ?></b><?= e($st_item['label']) ?></div>
+<?php endforeach; ?>
 </div></section>
+<?php endif; ?>
 
 <?php include 'includes/footer.php'; ?>

@@ -24,8 +24,10 @@ $st = [
     ['label' => 'New Apps', 'count' => $q("SELECT COUNT(*) FROM applications WHERE status='new'"), 'icon' => '✨', 'link' => 'applications.php'],
     ['label' => 'Employers', 'count' => $q("SELECT COUNT(*) FROM inquiries WHERE type='employer'"), 'icon' => '🏢', 'link' => 'inquiries.php?type=employer'],
     ['label' => 'Messages', 'count' => $q("SELECT COUNT(*) FROM inquiries WHERE type='contact'"), 'icon' => '✉️', 'link' => 'inquiries.php?type=contact'],
+    ['label' => 'Services', 'count' => $q("SELECT COUNT(*) FROM services WHERE active=1"), 'icon' => '🛠️', 'link' => 'manage-services.php'],
     ['label' => 'Blog Posts', 'count' => $q("SELECT COUNT(*) FROM blogs WHERE status='published'"), 'icon' => '📰', 'link' => 'manage-blogs.php'],
-    ['label' => 'Testimonials', 'count' => $q("SELECT COUNT(*) FROM testimonials"), 'icon' => '💬', 'link' => 'manage-testimonials.php']
+    ['label' => 'Testimonials', 'count' => $q("SELECT COUNT(*) FROM testimonials"), 'icon' => '💬', 'link' => 'manage-testimonials.php'],
+    ['label' => 'Site Stats', 'count' => $q("SELECT COUNT(*) FROM site_stats WHERE active=1"), 'icon' => '📊', 'link' => 'manage-stats.php']
 ];
 
 $recent=db()->query('SELECT a.*,j.title jt FROM applications a LEFT JOIN jobs j ON j.id=a.job_id ORDER BY a.id DESC LIMIT 5')->fetchAll(); 
