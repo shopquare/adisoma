@@ -54,10 +54,12 @@ $st->execute($a);
 $jobs = $st->fetchAll();
 
 // URL builder preserving current filters
-function job_page_url(int $targetPage): string {
-    $params = $_GET;
-    $params['page'] = $targetPage;
-    return 'jobs.php?' . http_build_query($params);
+if (!function_exists('job_page_url')) {
+    function job_page_url(int $targetPage): string {
+        $params = $_GET;
+        $params['page'] = $targetPage;
+        return 'jobs.php?' . http_build_query($params);
+    }
 }
 
 $fromIndex = $totalJobs > 0 ? $offset + 1 : 0;

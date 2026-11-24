@@ -728,6 +728,156 @@ function ensure_nav_menu_table() {
 }
 ensure_nav_menu_table();
 
+function ensure_sample_jobs() {
+    static $done = false;
+    if ($done) return;
+    $done = true;
+    try {
+        $seeded = db()->query("SELECT setting_value FROM site_settings WHERE setting_key = 'sample_jobs_seeded'")->fetchColumn();
+        if ($seeded === '1') {
+            return;
+        }
+
+        $count = (int)db()->query("SELECT COUNT(*) FROM jobs WHERE status = 'published'")->fetchColumn();
+        if ($count < 10) {
+            $sampleJobs = [
+                [
+                    'Senior Full Stack Developer (React & Node.js)',
+                    'IT',
+                    'Mumbai (Hybrid)',
+                    'Full-time',
+                    '4-7 Years',
+                    '₹12,00,000 - ₹18,00,000 P.A.',
+                    'We are seeking an experienced Senior Full Stack Developer to architect, build, and scale mission-critical web applications. The ideal candidate has deep expertise in React.js, Node.js, TypeScript, PostgreSQL, and AWS microservices architectures. Responsibilities include mentoring junior engineers, conducting code reviews, and optimizing distributed application performance.',
+                    'published'
+                ],
+                [
+                    'Cloud DevOps & Kubernetes Engineer',
+                    'IT',
+                    'Bangalore / Remote',
+                    'Full-time',
+                    '3-6 Years',
+                    '₹14,00,000 - ₹20,00,000 P.A.',
+                    'ADISOMA client is hiring a Cloud DevOps Engineer to design and maintain automated CI/CD pipelines, manage multi-region Kubernetes clusters, and automate infrastructure using Terraform and Ansible. Strong experience with Docker, AWS/Azure, monitoring tools (Prometheus, Grafana), and infrastructure-as-code is required.',
+                    'published'
+                ],
+                [
+                    'Python / Django Backend Engineer',
+                    'IT',
+                    'Pune (On-site)',
+                    'Full-time',
+                    '2-5 Years',
+                    '₹8,00,000 - ₹13,00,000 P.A.',
+                    'Looking for a passionate Python Developer to build robust RESTful APIs and integrate external financial gateways. Must have strong understanding of Django/FastAPI, ORM, Celery task queues, Redis caching, and automated testing frameworks.',
+                    'published'
+                ],
+                [
+                    'UI/UX Product Designer',
+                    'IT',
+                    'Mumbai / Remote',
+                    'Full-time',
+                    '3-5 Years',
+                    '₹9,00,000 - ₹14,00,000 P.A.',
+                    'We are looking for a creative UI/UX Product Designer to craft intuitive, user-centric interfaces for SaaS web and mobile applications. Proficiency in Figma, wireframing, high-fidelity prototyping, design system governance, and user journey testing is essential.',
+                    'published'
+                ],
+                [
+                    'Data Analyst & Business Intelligence Specialist',
+                    'IT',
+                    'Hyderabad (Hybrid)',
+                    'Full-time',
+                    '2-4 Years',
+                    '₹7,50,000 - ₹11,00,000 P.A.',
+                    'Seeking a Data Analyst to transform complex recruitment and enterprise datasets into actionable business intelligence dashboards. Required skills include advanced SQL, Power BI / Tableau, Excel data modeling, and basic Python for automated reporting.',
+                    'published'
+                ],
+                [
+                    'Technical Support & Network Administrator',
+                    'IT',
+                    'Mumbai (On-site)',
+                    'Full-time',
+                    '1-3 Years',
+                    '₹4,50,000 - ₹6,50,000 P.A.',
+                    'Responsible for maintaining office network infrastructure, firewall configuration, VPN access, hardware diagnostics, and level-1/2 IT support for internal employees and client workstations.',
+                    'published'
+                ],
+                [
+                    'Talent Acquisition Lead (IT Recruitment)',
+                    'Non-IT',
+                    'Mumbai',
+                    'Full-time',
+                    '4-8 Years',
+                    '₹8,00,000 - ₹13,00,000 P.A.',
+                    'Lead end-to-end IT recruitment cycles for enterprise accounts. Sourcing niche tech stacks, candidate evaluation, technical salary negotiations, client stakeholder management, and tracking recruitment metrics in ATS systems.',
+                    'published'
+                ],
+                [
+                    'HR Generalist & People Operations',
+                    'Non-IT',
+                    'Mumbai (On-site)',
+                    'Full-time',
+                    '2-5 Years',
+                    '₹5,00,000 - ₹8,00,000 P.A.',
+                    'Managing employee onboarding, statutory compliance, payroll coordination, grievance redressal, employee engagement programs, and annual appraisal performance cycles.',
+                    'published'
+                ],
+                [
+                    'Corporate Sales & Business Development Manager',
+                    'Non-IT',
+                    'Delhi NCR / Mumbai',
+                    'Full-time',
+                    '3-6 Years',
+                    '₹7,00,000 - ₹12,00,000 P.A. + Incentives',
+                    'Drive B2B sales for executive search and staffing services. Pitch staffing solutions to CXOs, negotiate master service agreements (MSAs), and nurture long-term corporate hiring partnerships.',
+                    'published'
+                ],
+                [
+                    'Senior Accountant & Financial Controller',
+                    'Non-IT',
+                    'Mumbai',
+                    'Full-time',
+                    '4-7 Years',
+                    '₹6,50,000 - ₹10,00,000 P.A.',
+                    'Handling financial audits, GST/TDS filings, monthly balance sheet reconciliations, accounts payable/receivable management, and MIS corporate reporting.',
+                    'published'
+                ],
+                [
+                    'Digital Marketing & Content Specialist',
+                    'Non-IT',
+                    'Remote',
+                    'Full-time',
+                    '2-4 Years',
+                    '₹5,50,000 - ₹8,50,000 P.A.',
+                    'Drive organic brand presence across LinkedIn, Google Search, and industry publications. Lead generation campaigns, SEO blog content planning, and social community growth.',
+                    'published'
+                ],
+                [
+                    'QA Automation Engineer (Selenium & Playwright)',
+                    'IT',
+                    'Bangalore (Hybrid)',
+                    'Contract',
+                    '3-5 Years',
+                    '₹10,00,000 - ₹15,00,000 P.A.',
+                    'Develop automated test suites for web and mobile platforms using Selenium, Playwright, and Postman API automation. Experience with performance regression and CI integration required.',
+                    'published'
+                ]
+            ];
+
+            $stmt = db()->prepare("INSERT INTO jobs(title, category, location, job_type, experience, salary, description, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            foreach ($sampleJobs as $job) {
+                $chk = db()->prepare("SELECT id FROM jobs WHERE title = ?");
+                $chk->execute([$job[0]]);
+                if (!$chk->fetch()) {
+                    $stmt->execute($job);
+                }
+            }
+        }
+
+        db()->exec("INSERT INTO site_settings (setting_key, setting_value, category) VALUES ('sample_jobs_seeded', '1', 'system') ON DUPLICATE KEY UPDATE setting_value='1'");
+    } catch (Exception $ex) {}
+}
+ensure_sample_jobs();
+
 function get_nav_links(string $type = 'header'): array {
     ensure_nav_menu_table();
     try {
