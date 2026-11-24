@@ -140,8 +140,8 @@ $latest_blogs=db()->query("SELECT * FROM blogs WHERE status='published' ORDER BY
 <!-- Latest Insights & Blogs Section -->
 <?php if(!empty($latest_blogs)): ?>
 <section class="s"><div class="wrap">
-    <div class="process-subtitle" style="text-align:center;">FROM OUR DESK</div>
-    <h2 class="t" style="margin-top:10px;">Latest Insights & Articles</h2>
+    <div class="process-subtitle" style="text-align:center;">FROM OUR BLOG</div>
+    <h2 class="t" style="margin-top:10px;">Latest Articles & Insights</h2>
     <div class="grid3">
         <?php foreach($latest_blogs as $b): ?>
         <article class="card" style="display:flex; flex-direction:column; padding:0; overflow:hidden;">
