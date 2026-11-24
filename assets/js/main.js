@@ -46,6 +46,36 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') toggleMobileMenu(false);
 });
 
+// Admin Mobile Drawer Controller
+const adminBurgerBtn = document.getElementById('adminBurgerBtn');
+const adminSidebar = document.getElementById('adminSidebar');
+const adminBackdrop = document.getElementById('adminBackdrop');
+const adminCloseBtn = document.getElementById('adminCloseBtn');
+
+function toggleAdminDrawer(open) {
+    if (!adminSidebar) return;
+    const shouldOpen = open !== undefined ? open : !adminSidebar.classList.contains('open');
+    adminSidebar.classList.toggle('open', shouldOpen);
+    if (adminBackdrop) adminBackdrop.classList.toggle('open', shouldOpen);
+    document.body.style.overflow = shouldOpen ? 'hidden' : '';
+}
+
+if (adminBurgerBtn) {
+    adminBurgerBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleAdminDrawer(true);
+    });
+}
+if (adminCloseBtn) {
+    adminCloseBtn.addEventListener('click', () => toggleAdminDrawer(false));
+}
+if (adminBackdrop) {
+    adminBackdrop.addEventListener('click', () => toggleAdminDrawer(false));
+}
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') toggleAdminDrawer(false);
+});
+
 // Testimonial Auto-Slider
 let slideIndex = 0;
 let slideTimer;

@@ -16,9 +16,14 @@ $st = [
 $recent=db()->query('SELECT a.*,j.title jt FROM applications a LEFT JOIN jobs j ON j.id=a.job_id ORDER BY a.id DESC LIMIT 5')->fetchAll(); 
 ?>
 
-<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-    <h1 style="margin:0;">Dashboard Overview</h1>
-    <a href="../index.php" target="_blank" class="btn sm alt">View Live Site ➔</a>
+<div class="dash-head">
+    <div>
+        <h1 style="margin:0 0 6px;">Dashboard Overview</h1>
+        <span style="color:#64748b; font-size:14px;">Welcome back to your administration portal</span>
+    </div>
+    <a href="../index.php" target="_blank" class="btn sm" style="background:#0284c7; border-color:#0284c7; color:#fff !important; box-shadow:0 4px 14px rgba(2, 132, 199, 0.25); white-space:nowrap;">
+        View Live Site ➔
+    </a>
 </div>
 
 <!-- Clickable, attractive stat cards -->

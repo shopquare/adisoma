@@ -5,4 +5,4 @@
 <div><h4>Contact</h4><p><?=e(CO['address'])?></p><p><?=e(CO['phone'])?></p><p><?=e(CO['email'])?></p>
 <p class="soc"><a href="<?=e(CO['facebook'])?>">Facebook</a> <a href="<?=e(CO['linkedin'])?>">LinkedIn</a> <a href="<?=e(CO['twitter'])?>">Twitter</a> <a href="<?=e(CO['instagram'])?>">Instagram</a></p></div>
 </div><div class="copy">&copy; <?=date('Y')?> ADISOMA Solution. All rights reserved. <a href="<?=BASE_URL?>/admin/login.php">Admin</a></div>
-<script src="<?=BASE_URL?>/assets/js/main.js"></script></body></html>
+<script src="<?=BASE_URL?>/assets/js/main.js?v=2.2"></script></body></html>
