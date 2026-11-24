@@ -2,16 +2,6 @@
 require_once __DIR__ . '/../includes/functions.php';
 admin_only();
 
-// Helper to sanitize/generate slug
-function make_slug($text) {
-    $text = preg_replace('~[^\pL\d]+~u', '-', $text);
-    $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
-    $text = preg_replace('~[^-\w]+~', '', $text);
-    $text = trim($text, '-');
-    $text = preg_replace('~-+~', '-', $text);
-    return strtolower($text ?: 'post-' . time());
-}
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!csrf_ok()) die('Bad token');
     $a = post('action');

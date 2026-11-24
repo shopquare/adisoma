@@ -42,15 +42,17 @@ function save_application(int $jobId):string{
  return '';
 }
 
-function make_slug($text) {
-    $text = preg_replace('~[^\pL\d]+~u', '-', $text);
-    if (function_exists('iconv')) {
-        $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+if (!function_exists('make_slug')) {
+    function make_slug($text) {
+        $text = preg_replace('~[^\pL\d]+~u', '-', $text);
+        if (function_exists('iconv')) {
+            $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+        }
+        $text = preg_replace('~[^-\w]+~', '', $text);
+        $text = trim($text, '-');
+        $text = preg_replace('~-+~', '-', $text);
+        return strtolower($text ?: 'item-' . time());
     }
-    $text = preg_replace('~[^-\w]+~', '', $text);
-    $text = trim($text, '-');
-    $text = preg_replace('~-+~', '-', $text);
-    return strtolower($text ?: 'item-' . time());
 }
 
 // Auto-create blogs table if missing in production database
