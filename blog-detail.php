@@ -38,11 +38,21 @@ $stmt->execute([$blog['id']]);
 $related = $stmt->fetchAll();
 ?>
 
-<article class="s"><div class="wrap" style="max-width: 860px;">
-    <!-- Breadcrumb & Back button -->
-    <div style="margin-bottom: 25px;">
-        <a href="blogs.php" class="btn sm alt">← Back to All Articles</a>
-    </div>
+<section class="s" style="padding-top: 35px; padding-bottom: 70px;">
+    <div class="wrap" style="max-width: 880px;">
+        <!-- Top Breadcrumb & Back Navigation Bar -->
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid #e2e8f0;">
+            <nav style="font-size: 14px; color: #64748b; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <a href="index.php" style="color: #0284c7; text-decoration: none; font-weight: 500;">Home</a>
+                <span style="color: #cbd5e1;">/</span>
+                <a href="blogs.php" style="color: #0284c7; text-decoration: none; font-weight: 500;">Blog</a>
+                <span style="color: #cbd5e1;">/</span>
+                <span style="color: #1e293b; font-weight: 600;"><?= e(mb_strimwidth($blog['title'], 0, 42, '...')) ?></span>
+            </nav>
+            <a href="blogs.php" style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #334155; text-decoration: none; padding: 7px 16px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; transition: all 0.2s ease; box-shadow: 0 1px 3px rgba(15,23,42,0.05);">
+                <span style="color: var(--o); font-weight: bold;">←</span> Back to All Articles
+            </a>
+        </div>
 
     <!-- Featured Cover Image -->
     <?php if (!empty($blog['image_url'])): ?>
@@ -107,6 +117,6 @@ $related = $stmt->fetchAll();
             </div>
         </div>
     <?php endif; ?>
-</div></article>
+</div></section>
 
 <?php include 'includes/footer.php'; ?>
