@@ -878,6 +878,92 @@ function ensure_sample_jobs() {
 }
 ensure_sample_jobs();
 
+function ensure_sample_blogs() {
+    static $done = false;
+    if ($done) return;
+    $done = true;
+    try {
+        $seeded = db()->query("SELECT setting_value FROM site_settings WHERE setting_key = 'sample_blogs_seeded'")->fetchColumn();
+        if ($seeded === '1') {
+            return;
+        }
+
+        $count = (int)db()->query("SELECT COUNT(*) FROM blogs WHERE status = 'published'")->fetchColumn();
+        if ($count < 6) {
+            $extraBlogs = [
+                [
+                    'Effective Technical Interview Strategies for Modern Developers',
+                    'effective-technical-interview-strategies',
+                    'Explore how to craft practical, engaging technical interviews that assess real-world problem solving rather than trivia algorithms.',
+                    "Traditional whiteboard interviews often fail to predict how well an engineer will perform in a production environment. In today's fast-moving software landscape, forward-thinking organizations are adopting collaborative, practical evaluation frameworks.\n\n### 1. Real-World Code Reviews\nGive candidates an existing PR with deliberate architectural trade-offs. Asking them to review it provides invaluable signal into their attention to detail, empathy, and code standards.\n\n### 2. Practical Pair Programming\nPairing with team members on a realistic feature ticket demonstrates communication style, debugging instincts, and receptivity to feedback.\n\n### 3. System Architecture Discussions\nInstead of textbook algorithms, discuss actual distributed systems scenarios the team solved recently.\n\nBuilding an empathetic and respectful evaluation experience helps companies stand out and win top tech talent.",
+                    'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80',
+                    'Tech Recruitment Desk',
+                    'published'
+                ],
+                [
+                    'The Complete Guide to Remote Team Culture and Productivity',
+                    'complete-guide-remote-team-culture-productivity',
+                    'Actionable guidelines for building trust, asynchronous collaboration, and high engagement across distributed global teams.',
+                    "Remote work is no longer an experiment; it is the operating system of the modern knowledge workforce. However, maintaining cohesion and velocity across time zones requires intentional leadership.\n\n### Prioritize Asynchronous Documentation\nWhen documentation is treated as a first-class deliverable, team members can make progress autonomously without waiting for live sync meetings.\n\n### Focus on Outcomes Over Hours\nHigh-trust organizations evaluate employees on delivered results, code quality, and business impact rather than time spent online.\n\n### Intentional Social Connection\nCreate regular opportunities for informal connection, virtual coffees, and quarterly in-person team retreats to maintain human bonds.",
+                    'https://images.unsplash.com/photo-1587560699334-cc4ff634909a?auto=format&fit=crop&w=800&q=80',
+                    'ADISOMA Team',
+                    'published'
+                ],
+                [
+                    'Contract Staffing vs. Full-Time Hiring: A Strategic Decision Guide',
+                    'contract-staffing-vs-full-time-hiring-guide',
+                    'Understand when to leverage contract talent for rapid delivery versus when to invest in permanent full-time employment.',
+                    "Every talent leader faces the recurring dilemma: should we open a full-time requisition or bring in specialized contract talent? Both models offer distinct strategic advantages depending on business lifecycle and project scope.\n\n### When Contract Staffing Excels\nContract staffing is optimal for specialized migrations (e.g. cloud cutover, ERP rollout), seasonal peaks, and short-term capacity surges where immediate expertise is needed without long-term overhead.\n\n### When Full-Time Hiring is Critical\nFoundational roles that hold core institutional memory, strategic IP, and long-term organizational leadership should almost always be permanent hires.\n\n### The Hybrid Model\nLeading organizations use a balanced 70/30 split between core full-time leaders and flexible contract experts, maximizing agility while safeguarding culture.",
+                    'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=800&q=80',
+                    'Workforce Advisory',
+                    'published'
+                ],
+                [
+                    'Mastering the Tech Resume: What Top Recruiters Look For',
+                    'mastering-the-tech-resume-what-recruiters-look-for',
+                    'Key formatting tips, impact metrics, and clarity principles that help software professionals land high-priority interviews.',
+                    "Recruiters and hiring managers spend an average of 15 seconds on an initial resume review. In that brief window, your resume must clearly communicate your core competencies, quantifiable impact, and technical depth.\n\n### Quantify Your Achievements\nInstead of 'Worked on payments system', write 'Redesigned payments microservice, reducing checkout latency by 35% and supporting 50k daily active transactions'.\n\n### Showcase Your Modern Tech Stack\nClearly highlight languages, frameworks, cloud platforms, and databases you actively use in production.\n\n### Keep Formatting Clean and Parsable\nUse clean typography, standard section headers, and avoid multi-column graphic templates that confuse Applicant Tracking Systems (ATS).",
+                    'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=800&q=80',
+                    'Career Advisory Desk',
+                    'published'
+                ],
+                [
+                    'Retaining Top Talent in a Competitive Market: Proven Retention Strategies',
+                    'retaining-top-talent-proven-retention-strategies',
+                    'Why competitive compensation is only the baseline, and how career progression pathways keep your best performers engaged.',
+                    "Replacing a senior employee costs between 1.5x to 2x their annual salary in lost momentum, recruiting fees, and onboarding time. Retention is therefore the single highest ROI talent activity a business can focus on.\n\n### Transparent Career Frameworks\nEmployees leave when they cannot visualize their next step. Clearly defined leveling guides and skill expectations provide a visible trajectory.\n\n### Continuous Learning Support\nTop performers want to learn. Providing conference stipends, certification allowances, and dedicated hack weeks fosters sustained loyalty.\n\n### Regular Check-Ins and Psychological Safety\nDo not wait for annual reviews to uncover frustration. Bi-weekly 1-on-1s focused on personal well-being and roadblock removal build deep mutual trust.",
+                    'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&q=80',
+                    'ADISOMA Team',
+                    'published'
+                ],
+                [
+                    'The Future of AI in Recruitment: Enhancing Human Connections',
+                    'future-of-ai-in-recruitment-enhancing-human-connections',
+                    'How automated talent matching and generative workflows empower recruiters to spend more time building meaningful relationships.',
+                    "Artificial intelligence is transforming recruitment, from automated candidate rediscovery to intelligent scheduling and skills assessment. But rather than replacing human recruiters, AI is removing tedious administrative friction.\n\n### Accelerated Candidate Matching\nMachine learning algorithms can scan internal candidate pools to surface qualified passive candidates who previously applied for related positions.\n\n### Personalized Candidate Engagement\nAutomated communication workflows ensure no applicant falls into a black hole, providing timely updates at every stage of the interview process.\n\n### Freeing Up Time for What Matters\nBy automating routine screening, recruiters gain hours every week to build deep human relationships with candidates and hiring managers.",
+                    'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80',
+                    'Tech Recruitment Desk',
+                    'published'
+                ]
+            ];
+
+            $stmt = db()->prepare("INSERT INTO blogs(title, slug, excerpt, content, image_url, author, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            $baseTime = time() - (count($extraBlogs) * 3600);
+            foreach ($extraBlogs as $idx => $b) {
+                $chk = db()->prepare("SELECT id FROM blogs WHERE slug = ?");
+                $chk->execute([$b[1]]);
+                if (!$chk->fetch()) {
+                    $postTime = date('Y-m-d H:i:s', $baseTime + ($idx * 3600));
+                    $stmt->execute([$b[0], $b[1], $b[2], $b[3], $b[4], $b[5], $b[6], $postTime]);
+                }
+            }
+        }
+
+        db()->exec("INSERT INTO site_settings (setting_key, setting_value, category) VALUES ('sample_blogs_seeded', '1', 'system') ON DUPLICATE KEY UPDATE setting_value='1'");
+    } catch (Exception $ex) {}
+}
+ensure_sample_blogs();
+
 function get_nav_links(string $type = 'header'): array {
     ensure_nav_menu_table();
     try {
