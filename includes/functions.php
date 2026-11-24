@@ -94,6 +94,7 @@ function redirect($u){header("Location: $u");exit;}
 function flash($m=null,$t='ok'){if($m){$_SESSION['f']=[$m,$t];return;}if(!empty($_SESSION['f'])){[$m,$t]=$_SESSION['f'];unset($_SESSION['f']);return "<div class='alert $t' role='alert' aria-live='polite'>".e($m)."</div>";}return '';}
 function admin_only(){if(empty($_SESSION['admin']))redirect('login.php');}
 function post($k){return trim($_POST[$k]??'');}
+function clean_input($d){return is_string($d)?trim($d):(is_array($d)?array_map('clean_input',$d):$d);}
 
 function log_action($action, $type, $entity_id, $details = '') {
     $admin_id = $_SESSION['admin'] ?? null;
@@ -218,6 +219,10 @@ function render_markdown_content(?string $text): string {
     if ($inPara) $html .= "</p>\n";
     if ($inList) $html .= "</ul>\n";
     return $html;
+}
+
+function format_markdown_content(?string $text): string {
+    return render_markdown_content($text);
 }
 
 // Visual Markdown toolbar and user instruction guide for admin inputs
@@ -491,6 +496,155 @@ function ensure_site_stats_table() {
 }
 ensure_site_stats_table();
 
+function ensure_about_sections_table() {
+    static $done = false;
+    if ($done) return;
+    $done = true;
+    try {
+        db()->query("SELECT 1 FROM about_sections LIMIT 1");
+    } catch (Exception $e) {
+        try {
+            db()->exec("
+                CREATE TABLE IF NOT EXISTS about_sections (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    title VARCHAR(200) NOT NULL,
+                    subtitle VARCHAR(200) DEFAULT '',
+                    section_type ENUM('text_image_right','text_image_left','cards_grid','full_width','cta_banner') NOT NULL DEFAULT 'text_image_right',
+                    content MEDIUMTEXT NULL,
+                    image_url VARCHAR(255) DEFAULT '',
+                    items_json MEDIUMTEXT NULL,
+                    btn_text VARCHAR(100) DEFAULT '',
+                    btn_url VARCHAR(255) DEFAULT '',
+                    bg_style VARCHAR(50) DEFAULT 'white',
+                    sort_order INT DEFAULT 0,
+                    active TINYINT(1) DEFAULT 1,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    INDEX(sort_order),
+                    INDEX(active)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+            ");
+            
+            $count = (int)db()->query("SELECT COUNT(*) FROM about_sections")->fetchColumn();
+            if ($count === 0) {
+                $stmt = db()->prepare("INSERT INTO about_sections(title, subtitle, section_type, content, image_url, items_json, btn_text, btn_url, bg_style, sort_order, active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                
+                // Section 1: Who We Are
+                $stmt->execute([
+                    'Who We Are',
+                    'ABOUT ADISOMA SOLUTIONS',
+                    'text_image_right',
+                    "ADISOMA Solution is a premier recruitment and staffing partner dedicated to bridging the gap between exceptional talent and industry-leading organizations. With years of experience across IT and Non-IT sectors, we deliver customized hiring strategies designed for long-term success.\n\n- **Understand Your Needs**: Deep dive into technical competencies and cultural synergy.\n- **Find the Perfect Candidate**: Proven 360-degree screening and placement methodology.\n- **Long-Term Partnership**: Continuous post-placement support ensuring retention and impact.",
+                    'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80',
+                    null,
+                    'Learn More About Services',
+                    'services.php',
+                    'white',
+                    1,
+                    1
+                ]);
+
+                // Section 2: Mission & Vision Cards
+                $cards1 = json_encode([
+                    [
+                        'title' => 'Our Mission',
+                        'desc' => 'To connect people and organizations through honest, efficient and human-centred hiring processes that create lasting value.',
+                        'image' => 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=600&q=80'
+                    ],
+                    [
+                        'title' => 'Our Vision',
+                        'desc' => 'To be the most trusted global talent partner, helping careers flourish and businesses scale rapidly and sustainably.',
+                        'image' => 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=600&q=80'
+                    ]
+                ], JSON_UNESCAPED_SLASHES);
+
+                $stmt->execute([
+                    'Our Mission & Vision',
+                    'OUR PURPOSE & ASPIRATION',
+                    'cards_grid',
+                    'The foundational principles that guide every interaction, interview, and recruitment campaign we undertake.',
+                    '',
+                    $cards1,
+                    '',
+                    '',
+                    'light',
+                    2,
+                    1
+                ]);
+
+                // Section 3: Core Values
+                $cards2 = json_encode([
+                    [
+                        'title' => 'Integrity & Ethics',
+                        'desc' => 'We practice honest, unbiased recruiting with transparent candidate representations and client commitments.',
+                        'image' => 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80'
+                    ],
+                    [
+                        'title' => 'Speed & Precision',
+                        'desc' => 'Deploying fast-turnaround talent sourcing that minimizes downtime without sacrificing technical quality.',
+                        'image' => 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80'
+                    ],
+                    [
+                        'title' => 'Human-Centred Approach',
+                        'desc' => 'Treating every candidate as an individual with unique career ambitions, fostering respectful long-term relationships.',
+                        'image' => 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80'
+                    ]
+                ], JSON_UNESCAPED_SLASHES);
+
+                $stmt->execute([
+                    'Our Core Values',
+                    'WHAT WE STAND FOR',
+                    'cards_grid',
+                    'These core values define how we operate, how we select candidates, and how we serve our employer partners every single day.',
+                    '',
+                    $cards2,
+                    '',
+                    '',
+                    'white',
+                    3,
+                    1
+                ]);
+
+                // Section 4: CTA Banner
+                $stmt->execute([
+                    'Ready to Build Your Dream Team or Take the Next Career Step?',
+                    'WORK WITH ADISOMA',
+                    'cta_banner',
+                    'Join hundreds of satisfied employers and placed professionals. Our recruitment consultants are ready to discuss your specific requirements.',
+                    '',
+                    null,
+                    'Connect With Us Today',
+                    'contact.php',
+                    'accent',
+                    4,
+                    1
+                ]);
+            }
+        } catch (Exception $ex) {
+            // Silently continue
+        }
+    }
+}
+ensure_about_sections_table();
+
+function get_about_sections(bool $onlyActive = true): array {
+    ensure_about_sections_table();
+    try {
+        $sql = "SELECT * FROM about_sections " . ($onlyActive ? "WHERE active = 1 " : "") . "ORDER BY sort_order ASC, id ASC";
+        $sections = db()->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($sections as &$sec) {
+            if (!empty($sec['items_json'])) {
+                $sec['items'] = json_decode($sec['items_json'], true) ?: [];
+            } else {
+                $sec['items'] = [];
+            }
+        }
+        return $sections;
+    } catch (Exception $e) {
+        return [];
+    }
+}
+
 function ensure_nav_menu_table() {
     static $done = false;
     if ($done) return;
@@ -540,12 +694,13 @@ function ensure_nav_menu_table() {
                     ['Applications', 'applications.php', 4],
                     ['Inquiries', 'inquiries.php', 5],
                     ['Services', 'manage-services.php', 6],
-                    ['Testimonials', 'manage-testimonials.php', 7],
-                    ['Site Stats', 'manage-stats.php', 8],
-                    ['Menu Manager', 'manage-menu.php', 9],
-                    ['Site Settings', 'manage-settings.php', 10],
-                    ['Admins', 'manage-admins.php', 11],
-                    ['Logs', 'logs.php', 12],
+                    ['About Page', 'manage-about.php', 7],
+                    ['Testimonials', 'manage-testimonials.php', 8],
+                    ['Site Stats', 'manage-stats.php', 9],
+                    ['Menu Manager', 'manage-menu.php', 10],
+                    ['Site Settings', 'manage-settings.php', 11],
+                    ['Admins', 'manage-admins.php', 12],
+                    ['Logs', 'logs.php', 13],
                 ];
                 $stmt = db()->prepare("INSERT INTO nav_items(title, url, menu_type, sort_order, active, is_custom) VALUES (?, ?, 'admin', ?, 1, 0)");
                 foreach ($adminDefaults as $d) {
@@ -558,9 +713,16 @@ function ensure_nav_menu_table() {
     }
 
     try {
+        $hasAbout = (int)db()->query("SELECT COUNT(*) FROM nav_items WHERE url='manage-about.php' AND menu_type='admin'")->fetchColumn();
+        if ($hasAbout === 0) {
+            db()->exec("INSERT INTO nav_items(title, url, menu_type, sort_order, active, is_custom) VALUES ('About Page', 'manage-about.php', 'admin', 7, 1, 0)");
+        }
+    } catch (Exception $ex) {}
+
+    try {
         $hasSettings = (int)db()->query("SELECT COUNT(*) FROM nav_items WHERE url='manage-settings.php' AND menu_type='admin'")->fetchColumn();
         if ($hasSettings === 0) {
-            db()->exec("INSERT INTO nav_items(title, url, menu_type, sort_order, active, is_custom) VALUES ('Site Settings', 'manage-settings.php', 'admin', 10, 1, 0)");
+            db()->exec("INSERT INTO nav_items(title, url, menu_type, sort_order, active, is_custom) VALUES ('Site Settings', 'manage-settings.php', 'admin', 11, 1, 0)");
         }
     } catch (Exception $ex) {}
 }
@@ -589,6 +751,7 @@ function get_nav_links(string $type = 'header'): array {
             'applications.php'=>'Applications',
             'inquiries.php'=>'Inquiries',
             'manage-services.php'=>'Services',
+            'manage-about.php'=>'About Page',
             'manage-testimonials.php'=>'Testimonials',
             'manage-stats.php'=>'Site Stats',
             'manage-menu.php'=>'Menu Manager',

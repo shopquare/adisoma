@@ -60,7 +60,7 @@ ADISOMA Solution is designed with a **High-Performance Modular Procedural Archit
 
 ### 3.1 Public Presentation Layer
 - **`index.php`**: Primary brand showcase, hero callouts, dynamic services carousel/grid, featured vacancies, client testimonials, and latest blog insights.
-- **`about.php`**: In-depth company background, corporate mission, core recruitment values, leadership team, and credentials.
+- **`about.php`**: Fully customizable company background, corporate mission, core recruitment values, leadership team, and dynamic content sections managed via database.
 - **`services.php` & `service-detail.php`**: Dynamic catalog of talent acquisition offerings (e.g., Executive Search, Contract Staffing, IT Recruitment) loaded directly from the database with custom rich content formatting.
 - **`jobs.php` & `apply.php`**: Candidate recruitment portal with real-time job filters (job type, location, department) and multipart application submission with resume upload handling.
 - **`blogs.php` & `blog-detail.php`**: Content marketing engine supporting Markdown and formatted articles, view count incrementing, related posts, and Open Graph sharing.
@@ -72,6 +72,7 @@ ADISOMA Solution is designed with a **High-Performance Modular Procedural Archit
 - **`admin/manage-applications.php`**: Candidate application review interface with status workflows (`new`, `reviewed`, `shortlisted`, `rejected`) and note tracking.
 - **`admin/download.php`**: Secure streaming endpoint verifying active admin session before streaming binary resumes from the protected `uploads/resumes/` folder.
 - **`admin/manage-services.php`**: Manage service offerings, icons, images, descriptions, and dynamic slug generation.
+- **`admin/manage-about.php`**: Full section builder and visual customizer for `about.php` (add, edit, reorder, delete sections, multi-card grids, and page hero banner).
 - **`admin/manage-blogs.php`**: Article publication workflow with rich content rendering and slug management.
 - **`admin/manage-menu.php`**: Visual site navigation reordering, label customization, and custom routing.
 - **`admin/manage-settings.php`**: Centralized configuration of phone numbers, email addresses, corporate headquarters, and social links.

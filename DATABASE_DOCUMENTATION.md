@@ -178,6 +178,25 @@ Stores centralized site-wide key-value configuration variables.
 | `setting_value` | TEXT | YES | NULL | Textual value (e.g., phone, email, address, Facebook URL) |
 | `updated_at` | DATETIME | NO | CURRENT_TIMESTAMP | Last modification timestamp |
 
+### 3.9 `about_sections`
+Stores fully customizable, reorderable content sections and cards for the public About Us page (`about.php`).
+| Column | Type | Null | Default | Description |
+|---|---|---|---|---|
+| `id` | INT UNSIGNED | NO | AUTO_INCREMENT | Primary Key |
+| `title` | VARCHAR(200) | NO | | Section heading title |
+| `subtitle` | VARCHAR(200) | YES | '' | Section eyebrow / badge tag |
+| `section_type` | ENUM | NO | 'text_image_right' | Layout style: `'text_image_right'`, `'text_image_left'`, `'cards_grid'`, `'full_width'`, `'cta_banner'` |
+| `content` | MEDIUMTEXT | YES | NULL | Rich narrative body (Markdown supported) |
+| `image_url` | VARCHAR(255) | YES | '' | Featured image URL or uploaded file path |
+| `items_json` | MEDIUMTEXT | YES | NULL | JSON array of child cards (Title, Description, Image) for `cards_grid` |
+| `btn_text` | VARCHAR(100) | YES | '' | Optional CTA button label |
+| `btn_url` | VARCHAR(255) | YES | '' | Optional CTA destination URL |
+| `bg_style` | VARCHAR(50) | NO | 'white' | Background styling: `'white'`, `'light'`, `'accent'` |
+| `sort_order` | INT | NO | 0 | Display sequence position index |
+| `active` | TINYINT(1) | NO | 1 | Boolean visibility switch |
+| `created_at` | DATETIME | NO | CURRENT_TIMESTAMP | Record creation timestamp |
+| `updated_at` | DATETIME | NO | CURRENT_TIMESTAMP | Last modification timestamp |
+
 ---
 
 ## 4. Automated Migration & Auto-Provisioning

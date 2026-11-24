@@ -5,6 +5,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.2.0] - 2026-11-24
+
+### Added
+- **Full Dynamic About Page Customizer (`manage-about.php`)**:
+  - Built an administrative section manager allowing admins to add, edit, reorder, hide, and delete any section on `about.php`.
+  - Added support for 5 distinct section layout presets:
+    - `text_image_right`: Text/bullets on the left, featured image on the right.
+    - `text_image_left`: Featured image on the left, text/bullets on the right.
+    - `cards_grid`: Multi-card grid builder supporting individual card title, description, and icon/image.
+    - `full_width`: Centered storytelling narrative block.
+    - `cta_banner`: High-impact call-to-action banner with customizable button destination.
+  - Added background style options (Clean White, Soft Light Gray, Accent Brand Gradient).
+  - Integrated rich Markdown formatting cheat sheet toolbar (`markdown_guide_html`) for headings, bold text, and bullet lists.
+  - Added file upload capability for section images into `uploads/about/`.
+  - Added quick 1-click order adjustment (⬆️ Move Up / ⬇️ Move Down) and visibility toggle.
+  - Added editable Page Hero Banner title and subtitle stored in `site_settings`.
+  - Added "About Page" quick navigation link in admin sidebar and dashboard overview card.
+- **Dynamic Database Schema Auto-Provisioning**:
+  - Added `ensure_about_sections_table()` in `includes/functions.php` to auto-provision table `about_sections` and seed initial sections seamlessly.
+- **Frontend Dynamic Rendering**:
+  - Rewrote `about.php` to dynamically fetch and render active sections from the database.
+
+---
+
 ## [2.1.0] - 2026-11-24
 
 ### Security

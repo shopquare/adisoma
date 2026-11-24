@@ -25,6 +25,7 @@ $st = [
     ['label' => 'Employers', 'count' => $q("SELECT COUNT(*) FROM inquiries WHERE type='employer'"), 'icon' => '🏢', 'link' => 'inquiries.php?type=employer'],
     ['label' => 'Messages', 'count' => $q("SELECT COUNT(*) FROM inquiries WHERE type='contact'"), 'icon' => '✉️', 'link' => 'inquiries.php?type=contact'],
     ['label' => 'Services', 'count' => $q("SELECT COUNT(*) FROM services WHERE active=1"), 'icon' => '🛠️', 'link' => 'manage-services.php'],
+    ['label' => 'About Page', 'count' => $q("SELECT COUNT(*) FROM about_sections WHERE active=1") . ' Secs', 'icon' => '📖', 'link' => 'manage-about.php'],
     ['label' => 'Blog Posts', 'count' => $q("SELECT COUNT(*) FROM blogs WHERE status='published'"), 'icon' => '📰', 'link' => 'manage-blogs.php'],
     ['label' => 'Testimonials', 'count' => $q("SELECT COUNT(*) FROM testimonials"), 'icon' => '💬', 'link' => 'manage-testimonials.php'],
     ['label' => 'Site Stats', 'count' => $q("SELECT COUNT(*) FROM site_stats WHERE active=1"), 'icon' => '📊', 'link' => 'manage-stats.php'],
