@@ -54,4 +54,5 @@ jobs:
               --exclude-glob uploads/resumes/* \
               --exclude-glob uploads/images/* \
               ./ \"$TARGET_DIR\";
+            rm -f \"$TARGET_DIR/industries.php\";
           "

@@ -12,7 +12,7 @@
 - Company address/phone/email/social links: `CO` array in `config/database.php` (placeholders now).
 - Colors: CSS variables at the top of `assets/css/style.css`.
 - Services: Admin > Services. Jobs: Admin > Jobs (draft/publish/edit/delete).
-- Sample stats and About/Industries text: edit `index.php`, `about.php`, `industries.php`.
+- Sample stats and About text: edit `index.php`, `about.php`.
 
 ## Security notes
 PDO prepared statements, CSRF tokens, output escaping, password hashing, honeypot on public forms, resumes stored under random names in a deny-all folder and served only to logged-in admins via `admin/download.php`. For live hosting use HTTPS, set a DB password, and keep `display_errors` off.
